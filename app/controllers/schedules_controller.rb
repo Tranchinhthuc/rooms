@@ -14,8 +14,10 @@ class SchedulesController < ApplicationController
     today = Date.today
     start_time = params[:start_time].split(':')
     end_time = params[:end_time].split(':')
-    @schedule.start_time = DateTime.new(today.year,today.month, today.day, start_time[0].to_i, round_minute(start_time[1].to_i))
-    @schedule.end_time = DateTime.new(today.year,today.month, today.day, end_time[0].to_i, round_minute(end_time[1].to_i))
+    start_time_round = round_minute(start_time[0].to_i, start_time[1].to_i)
+    end_time_round = round_minute(end_time[0].to_i, end_time[1].to_i)
+    @schedule.start_time = DateTime.new(today.year,today.month, today.day, start_time_round[0].to_i, start_time_round[1].to_i)
+    @schedule.end_time = DateTime.new(today.year,today.month, today.day, end_time_round[0].to_i, end_time_round[1].to_i)
     @schedule.title = params[:title]
     if @schedule.save
       render(json: schedule_as_json(@schedule))
@@ -28,8 +30,10 @@ class SchedulesController < ApplicationController
     today = Date.today
     start_time = params[:start_time].split(':')
     end_time = params[:end_time].split(':')
-    @schedule.start_time = DateTime.new(today.year,today.month, today.day, start_time[0].to_i, round_minute(start_time[1].to_i))
-    @schedule.end_time = DateTime.new(today.year,today.month, today.day, end_time[0].to_i, round_minute(end_time[1].to_i))
+    start_time_round = round_minute( start_time[0].to_i, start_time[1].to_i)
+    end_time_round = round_minute( end_time[0].to_i, end_time[1].to_i)
+    @schedule.start_time = DateTime.new(today.year,today.month, today.day, start_time_round[0].to_i, start_time_round[1].to_i)
+    @schedule.end_time = DateTime.new(today.year,today.month, today.day, end_time_round[0].to_i, end_time_round[1].to_i)
 
     if @schedule.save
       render(json: schedule_as_json(@schedule))
@@ -61,7 +65,7 @@ class SchedulesController < ApplicationController
       schedule
     end
 
-    def round_minute(minute)
+    def round_minute(hour, minute)
       case minute
       when (1..14)
         minute = 15
@@ -71,7 +75,8 @@ class SchedulesController < ApplicationController
         minute = 45
       when (46..59)
         minute = 0
+        hour = hour + 1
       end
-      minute
+      [hour, minute]
     end
 end
