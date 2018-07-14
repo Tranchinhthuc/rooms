@@ -9,3 +9,18 @@ for (let i = 0; i <= 95; i++) {
   })
 }
 export const dateTimeStamp = arr
+
+export const eventConvertor = (events) => {
+  events.map((event) => {
+    event.end = new Date(event.end)
+    event.start = new Date(event.start)
+    return event
+  })
+  return events
+}
+
+export const timeToHHMMString = (time) => {
+  return `${time.getHours()}:${time.getMinutes()}`
+}
+
+export const timeZone = new Date().getTimezoneOffset()/60

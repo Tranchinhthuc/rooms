@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import {dateTimeStamp, timeShotHeight} from '../constants'
+import {dateTimeStamp, timeShotHeight, timeZone} from '../constants'
+import moment from "moment";
 
 export default class AppointmentForm extends Component {
   constructor(props) {
@@ -9,16 +10,16 @@ export default class AppointmentForm extends Component {
     this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = {startTime: '', endTime: '', title: ''};
+    this.state = {start: this.props.startTime, end: this.props.endTime, title: ''};
   }
 
   handleStartTimeChange(e) {
-    console.log('startTime', e.target.value)
-    this.setState({startTime: e.target.value});
+    this.setState({start: e.target.value});
   }
 
   handleEndTimeChange(e) {
-    this.setState({endTime: e.target.value});
+    console.log('SELECT', e.target.value)
+    this.setState({end: e.target.value});
   }
 
   handleTitleChange(e) {
@@ -26,9 +27,15 @@ export default class AppointmentForm extends Component {
   }
 
   handleSubmit(e) {
-    this.props.handleSubmit(this.state.title, this.state.startTime, this.state.endTime);
+    let start = (this.state.start && `${moment(this.props.startTime).format("YYYY/MM/DD")} ${this.state.start}` ) ||
+      moment(this.props.startTime).format("YYYY/MM/DD HH:mm")
+    let end = (this.state.end && `${moment(this.props.startTime).format("YYYY/MM/DD")} ${this.state.end}` ) ||
+      moment(this.props.endTime).format("YYYY/MM/DD HH:mm")
+    this.props.handleSubmit(this.state.title, start, end, new Date().getTimezoneOffset()/60);
+    console.log('TIME', timeZone);
   }
   render() {
+    console.log('FORMMM', this.state.endTime)
     return (
         <div>
           <div className="modal fade" id="appointment-form" role="dialog">
@@ -41,12 +48,17 @@ export default class AppointmentForm extends Component {
                             placeholder='Add Title'
                             onChange={this.handleTitleChange}/>
                   </p>
+                  <p>Date: {moment(this.props.startTime).format("YYYY/MM/DD")}</p>
                   <p>
                     <select style={{width: '45%', display: 'inline-block'}} className="form-control" onChange={this.handleStartTimeChange}>
                       <option value=''>---Start Time---</option>
                       {
                         dateTimeStamp.map((time, index) => {
-                          return <option key={index} value={time.timeStr}>{time.timeStr}</option>
+                          return <option
+                            selected={time.timeStr===moment(this.props.startTime).format("HH:mm")}
+                            key={index}
+                            value={time.timeStr}>{time.timeStr}
+                          </option>
                         })
                       }
                     </select>
@@ -56,7 +68,11 @@ export default class AppointmentForm extends Component {
                       <option value=''>---End Time---</option>
                       {
                         dateTimeStamp.map((time, index) => {
-                          return <option key={index} value={time.timeStr}>{time.timeStr}</option>
+                          return <option
+                            selected={time.timeStr===moment(this.props.endTime).format("HH:mm")}
+                            key={index}
+                            value={time.timeStr}>{time.timeStr}
+                          </option>
                         })
                       }
                     </select>

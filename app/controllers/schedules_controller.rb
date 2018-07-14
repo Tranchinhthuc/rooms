@@ -11,14 +11,9 @@ class SchedulesController < ApplicationController
 
   def create
     @schedule = Schedule.new
-    today = Date.today
-    start_time = params[:start_time].split(':')
-    end_time = params[:end_time].split(':')
-    start_time_round = round_minute(start_time[0].to_i, start_time[1].to_i)
-    end_time_round = round_minute(end_time[0].to_i, end_time[1].to_i)
-    @schedule.start_time = DateTime.new(today.year,today.month, today.day, start_time_round[0].to_i, start_time_round[1].to_i)
-    @schedule.end_time = DateTime.new(today.year,today.month, today.day, end_time_round[0].to_i, end_time_round[1].to_i)
     @schedule.title = params[:title]
+    @schedule.start_time = params[:start_time].to_datetime + params[:time_zone].to_i.hours
+    @schedule.end_time = params[:end_time].to_datetime + params[:time_zone].to_i.hours
     if @schedule.save
       render(json: schedule_as_json(@schedule))
     else
@@ -27,14 +22,8 @@ class SchedulesController < ApplicationController
   end
 
   def update
-    today = Date.today
-    start_time = params[:start_time].split(':')
-    end_time = params[:end_time].split(':')
-    start_time_round = round_minute( start_time[0].to_i, start_time[1].to_i)
-    end_time_round = round_minute( end_time[0].to_i, end_time[1].to_i)
-    @schedule.start_time = DateTime.new(today.year,today.month, today.day, start_time_round[0].to_i, start_time_round[1].to_i)
-    @schedule.end_time = DateTime.new(today.year,today.month, today.day, end_time_round[0].to_i, end_time_round[1].to_i)
-
+    @schedule.start_time = params[:start_time].to_datetime + params[:time_zone].to_i.hours
+    @schedule.end_time = params[:end_time].to_datetime + params[:time_zone].to_i.hours
     if @schedule.save
       render(json: schedule_as_json(@schedule))
     else
@@ -57,11 +46,8 @@ class SchedulesController < ApplicationController
 
     def schedule_as_json(schedule)
       schedule = schedule.as_json
-      schedule[:hour_start_time] = schedule['start_time'].hour
-      schedule[:minute_start_time] = schedule['start_time'].min
-      schedule[:hour_end_time] = schedule['end_time'].hour
-      schedule[:minute_end_time] = schedule['end_time'].min
-      schedule[:duration] = (schedule['end_time'] - schedule['start_time']) / 60
+      schedule[:start] = schedule['start_time'].to_f*1000
+      schedule[:end] = schedule['end_time'].to_f*1000
       schedule
     end
 
