@@ -10,7 +10,11 @@ export default class AppointmentForm extends Component {
     this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = {start: this.props.startTime, end: this.props.endTime, title: ''};
+    this.state = {
+      start: this.props.startTime,
+      end: this.props.endTime,
+      title: ''
+    };
   }
 
   handleStartTimeChange(e) {
@@ -31,24 +35,23 @@ export default class AppointmentForm extends Component {
       moment(this.props.startTime).format("YYYY/MM/DD HH:mm")
     let end = (this.state.end && `${moment(this.props.startTime).format("YYYY/MM/DD")} ${this.state.end}` ) ||
       moment(this.props.endTime).format("YYYY/MM/DD HH:mm")
-    this.props.handleSubmit(this.state.title, start, end, new Date().getTimezoneOffset()/60);
-    console.log('TIME', timeZone);
+    this.props.handleSubmit(this.state.title, start, end, this.props.resourceId, new Date().getTimezoneOffset()/60, null);
   }
   render() {
-    console.log('FORMMM', this.state.endTime)
     return (
         <div>
           <div className="modal fade" id="appointment-form" role="dialog">
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-body">
+                  <p>Date: {moment(this.props.startTime).format("YYYY/MM/DD")}</p>
+                  <p>Employee: {this.props.resourceTitle}</p>
                   <p><input type="text"
                             className="form-control"
                             id="appointment-title"
                             placeholder='Add Title'
                             onChange={this.handleTitleChange}/>
                   </p>
-                  <p>Date: {moment(this.props.startTime).format("YYYY/MM/DD")}</p>
                   <p>
                     <select style={{width: '45%', display: 'inline-block'}} className="form-control" onChange={this.handleStartTimeChange}>
                       <option value=''>---Start Time---</option>

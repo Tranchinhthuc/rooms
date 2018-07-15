@@ -10,6 +10,8 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {appointmentConvertor, timeZone} from '../lib'
 import AppointmentForm from './AppointmentForm'
+import CustomEvent from './CustomEvent';
+
 
 BigCalendar.momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
@@ -19,6 +21,8 @@ class Dnd extends React.Component {
     super(props);
     this.state = {
       appointments: [],
+      employees: [],
+      resourceId: '',
       startTime: '',
       endTime: '',
     };
@@ -45,6 +49,22 @@ class Dnd extends React.Component {
           });
         }
       )
+
+    fetch("/employees.json")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            employees: result,
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
   }
 
   resizeEvent(resizeType, { event, start, end }){
@@ -55,7 +75,8 @@ class Dnd extends React.Component {
         'X-Operator-Token': this.props.apiToken
       },
       body: JSON.stringify({start_time: moment(start).format("YYYY/MM/DD HH:mm"),
-        end_time: moment(end).format("YYYY/MM/DD HH:mm"), time_zone: timeZone})
+        end_time: moment(end).format("YYYY/MM/DD HH:mm"), time_zone: timeZone,
+        user_id: this.props.currentUser && this.props.currentUser.id})
     })
 
     fetch(myRequest)
@@ -83,13 +104,15 @@ class Dnd extends React.Component {
   selectSlot(slotInfo){
     this.setState({
       startTime: slotInfo.start,
-      endTime: slotInfo.end
+      endTime: slotInfo.end,
+      resourceId: slotInfo.resourceId,
     });
     $('#appointment-form').modal('toggle');
     console.log(
       `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
         `\nend: ${slotInfo.end.toLocaleString()}` +
-        `\naction: ${slotInfo.action}`
+        `\naction: ${slotInfo.action}` +
+        `\nresourceId: ${slotInfo.resourceId}`
     )
   }
 
@@ -101,7 +124,8 @@ class Dnd extends React.Component {
           'X-Operator-Token': this.props.apiToken
         },
         body: JSON.stringify({start_time: moment(start).format("YYYY/MM/DD HH:mm"),
-          end_time: moment(end).format("YYYY/MM/DD HH:mm"), time_zone: timeZone})
+          end_time: moment(end).format("YYYY/MM/DD HH:mm"),
+          time_zone: timeZone, user_id: this.props.currentUser && this.props.currentUser.id})
       })
 
       fetch(myRequest)
@@ -126,14 +150,18 @@ class Dnd extends React.Component {
         )
   }
 
-  handleSubmit(title, startTime, endTime, timeZone) {
+  handleSubmit(title, startTime, endTime, resourceId, timeZone) {
     const myRequest = new Request('/appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Operator-Token': this.props.apiToken
       },
-      body: JSON.stringify({start_time: startTime, end_time: endTime, title: title, time_zone: timeZone })
+      body: JSON.stringify({start_time: startTime, end_time: endTime, title: title,
+        time_zone: timeZone,
+        user_id: this.props.currentUser && this.props.currentUser.id,
+        resource_id: resourceId
+      })
     })
 
     fetch(myRequest)
@@ -150,6 +178,10 @@ class Dnd extends React.Component {
           this.setState({
             appointments: appointmentConvertor(arr),
             errorMessage: '',
+            employees: this.state.employees.map((e) => {
+              if(result.resourceId == e.id){ e.appointmentCount = e.appointmentCount + 1 }
+              return e
+            })
           });
         },
         (error) => {
@@ -162,24 +194,36 @@ class Dnd extends React.Component {
   }
 
   render() {
-    console.log('currentUser', this.props.currentUser)
+    let resourceMap = this.state.employees.map((em) => {
+      return { resourceId: em.id, resourceTitle: `${em.name}(${em.appointmentCount} appointments)` }
+    })
+
+    let indexEmployee = this.state.employees.map((e) => e.id).indexOf(this.state.resourceId);
+
     return (
       <React.Fragment>
         <AppointmentForm endTime={this.state.endTime}
           startTime={this.state.startTime}
+          resourceId={this.state.resourceId}
+          resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
           handleSubmit={this.handleSubmit} />
         <DragAndDropCalendar
           selectable
           resizable
           step={15}
+          components={{ event: CustomEvent }}
+          views={['day', 'week']}
           events={this.state.appointments}
           onEventDrop={this.moveEvent}
-          defaultView={BigCalendar.Views.WEEK}
+          defaultView={BigCalendar.Views.DAY}
           scrollToTime={new Date(1970, 1, 1, 6)}
           defaultDate={new Date()}
           onEventResize={this.resizeEvent}
           onSelectEvent={appointment => alert(appointment.title)}
           onSelectSlot={this.selectSlot}
+          resources={resourceMap}
+          resourceIdAccessor="resourceId"
+          resourceTitleAccessor="resourceTitle"
         />
       </React.Fragment>
     );

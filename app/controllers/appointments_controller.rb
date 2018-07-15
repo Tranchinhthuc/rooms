@@ -12,9 +12,10 @@ class AppointmentsController < ApplicationController
   end
 
   def create
-    byebug
     @appointment = Appointment.new
     @appointment.name = params[:title]
+    @appointment.user_id = params[:user_id]
+    @appointment.employee_id = params[:resource_id]
     @appointment.start_time = params[:start_time].to_datetime + params[:time_zone].to_i.hours
     @appointment.end_time = params[:end_time].to_datetime + params[:time_zone].to_i.hours
     if @appointment.save
@@ -48,9 +49,15 @@ class AppointmentsController < ApplicationController
     end
 
     def appointment_as_json(appointment)
+      user = appointment.user
+      employee = appointment.employee
       appointment = appointment.as_json
       appointment[:start] = appointment['start_time'].to_f*1000
       appointment[:end] = appointment['end_time'].to_f*1000
+      appointment[:title] = appointment['name']
+      appointment[:userEmail] = user.try(:email)
+      appointment[:resourceId] = employee.try(:id)
+      appointment[:resourceTitle] = employee.try(:name)
       appointment
     end
 
