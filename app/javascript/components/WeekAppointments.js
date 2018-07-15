@@ -8,7 +8,7 @@ import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {appointmentConvertor, timeZone, countAppointmentsInDay} from '../lib'
+import {appointmentConvertor, timeZone} from '../lib'
 import AppointmentForm from './AppointmentForm'
 import CustomEvent from './CustomEvent';
 
@@ -21,11 +21,7 @@ class Dnd extends React.Component {
     super(props);
     this.state = {
       appointments: appointmentConvertor(this.props.appointments),
-      employees: this.props.employees.map((e) => {
-                    e.appointmentCount = countAppointmentsInDay(appointmentConvertor(e.appointments), new Date())
-                    return e
-                  }),
-      currentDay: new Date(),
+      employees: this.props.employees,
       resourceId: '',
       startTime: '',
       endTime: '',
@@ -149,9 +145,7 @@ class Dnd extends React.Component {
             appointments: appointmentConvertor(arr),
             errorMessage: '',
             employees: this.state.employees.map((e) => {
-              if(result.resourceId == e.id){
-                e.appointmentCount = 1 + e.appointmentCount
-              }
+              if(result.resourceId == e.id){ e.appointmentCount = e.appointmentCount + 1 }
               return e
             })
           });
@@ -169,6 +163,7 @@ class Dnd extends React.Component {
     let resourceMap = this.state.employees.map((em) => {
       return { resourceId: em.id, resourceTitle: `${em.name}(${em.appointmentCount} appointments)` }
     })
+
     let indexEmployee = this.state.employees.map((e) => e.id).indexOf(this.state.resourceId);
 
     return (
@@ -178,38 +173,51 @@ class Dnd extends React.Component {
           resourceId={this.state.resourceId}
           resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
           handleSubmit={this.handleSubmit} />
+        <ul>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.total_appointments_of_this_week} Appuntamenti totali questa settimana
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {console.log(this.props)}
+            {this.props.statistic.remain_appointments_of_this_week} Appuntamenti rimanenti questa settimana
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.total_appointments_of_this_month} Appuntamenti totali questo mese
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.remain_appointments_of_this_month} Appuntamenti rimanenti questo mese
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.total_appointments_of_this_year} Appuntamenti totali quest'anno
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.total_appointments_of_today} Al Momento non ci sono Appuntamenti.
+          </li>
+        </ul>
         <DragAndDropCalendar
           selectable
           resizable
           step={15}
           components={{ event: CustomEvent }}
-          views={['day']}
+          views={['week']}
           events={this.state.appointments}
           onEventDrop={this.moveEvent}
-          defaultView={BigCalendar.Views.DAY}
+          defaultView={BigCalendar.Views.WEEK}
           defaultDate={new Date()}
           onEventResize={this.resizeEvent}
           onSelectEvent={appointment => alert(appointment.title)}
           onSelectSlot={this.selectSlot}
-          resources={resourceMap}
-          resourceIdAccessor="resourceId"
-          resourceTitleAccessor="resourceTitle"
           min={new Date(1970, 7, 1, 8, 0)}
           max={new Date(1970, 7, 1, 20, 0)}
-          onNavigate={(day) => {
-            console.log('DAY', this.state.currentDay)
-             this.setState({
-               employees: this.state.employees.map((e) => {
-                            e.appointmentCount = countAppointmentsInDay(appointmentConvertor(e.appointments), day)
-                            return e
-                          }),
-               currentDay: day
-             })}}
         />
       </React.Fragment>
     );
   }
 }
+
+// Home.propTypes = {
+//   current_user: PropTypes.Object
+// };
 
 const Calendar = DragDropContext(HTML5Backend)(Dnd);
 export default Calendar

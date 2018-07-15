@@ -45,7 +45,11 @@ export default class AppointmentForm extends Component {
               <div className="modal-content">
                 <div className="modal-body">
                   <p>Date: {moment(this.props.startTime).format("YYYY/MM/DD")}</p>
-                  <p>Employee: {this.props.resourceTitle}</p>
+                  {
+                    this.props.resourceTitle && (
+                      <p>Employee: {this.props.resourceTitle}</p>
+                    )
+                  }
                   <p><input type="text"
                             className="form-control"
                             id="appointment-title"
