@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import {dateTimeStamp, timeShotHeight, timeZone} from '../constants'
+import {dateTimeStamp, timeShotHeight, timeZone} from '../lib'
 import moment from "moment";
 
 export default class AppointmentForm extends Component {

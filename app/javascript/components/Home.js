@@ -2,14 +2,13 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 import React from "react";
 import ReactDOM from "react-dom";
-import events from "./events";
 import HTML5Backend from "react-dnd-html5-backend";
 import { DragDropContext } from "react-dnd";
 import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {eventConvertor, timeZone} from '../constants'
+import {appointmentConvertor, timeZone} from '../lib'
 import AppointmentForm from './AppointmentForm'
 
 BigCalendar.momentLocalizer(moment);
@@ -19,7 +18,7 @@ class Dnd extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
+      appointments: [],
       startTime: '',
       endTime: '',
     };
@@ -31,12 +30,12 @@ class Dnd extends React.Component {
   }
 
   componentDidMount() {
-    fetch("/schedules.json")
+    fetch("/appointments.json")
       .then(res => res.json())
       .then(
         (result) => {
           this.setState({
-            events: eventConvertor(result),
+            appointments: appointmentConvertor(result),
           });
         },
         (error) => {
@@ -49,7 +48,7 @@ class Dnd extends React.Component {
   }
 
   resizeEvent(resizeType, { event, start, end }){
-    const myRequest = new Request('/schedules/' + event.id, {
+    const myRequest = new Request('/appointments/' + event.id, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -63,12 +62,12 @@ class Dnd extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          let arr = this.state.events
+          let arr = this.state.appointments
           console.log('MOVE', result)
           let index = arr.map((e) => e.id).indexOf(result.id);
           arr[index] = result
           this.setState({
-            events: eventConvertor(arr),
+            appointments: appointmentConvertor(arr),
             errorMessage: '',
           });
         },
@@ -95,7 +94,7 @@ class Dnd extends React.Component {
   }
 
   moveEvent({ event, start, end }) {
-      const myRequest = new Request('/schedules/' + event.id, {
+      const myRequest = new Request('/appointments/' + event.id, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -109,12 +108,12 @@ class Dnd extends React.Component {
         .then(res => res.json())
         .then(
           (result) => {
-            let arr = this.state.events
+            let arr = this.state.appointments
             console.log('MOVE', result)
             let index = arr.map((e) => e.id).indexOf(result.id);
             arr[index] = result
             this.setState({
-              events: eventConvertor(arr),
+              appointments: appointmentConvertor(arr),
               errorMessage: '',
             });
           },
@@ -128,7 +127,7 @@ class Dnd extends React.Component {
   }
 
   handleSubmit(title, startTime, endTime, timeZone) {
-    const myRequest = new Request('/schedules', {
+    const myRequest = new Request('/appointments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -141,7 +140,7 @@ class Dnd extends React.Component {
       .then(res => res.json())
       .then(
         (result) => {
-          let arr = this.state.events
+          let arr = this.state.appointments
           console.log('result', result)
           if(result.errors){
             this.setState({ errorMessage: "Start time should be less than end time" })
@@ -149,7 +148,7 @@ class Dnd extends React.Component {
           }
           arr.push(result)
           this.setState({
-            events: eventConvertor(arr),
+            appointments: appointmentConvertor(arr),
             errorMessage: '',
           });
         },
@@ -163,7 +162,7 @@ class Dnd extends React.Component {
   }
 
   render() {
-    console.log('Events', this.state.endTime)
+    console.log('currentUser', this.props.currentUser)
     return (
       <React.Fragment>
         <AppointmentForm endTime={this.state.endTime}
@@ -173,19 +172,23 @@ class Dnd extends React.Component {
           selectable
           resizable
           step={15}
-          events={this.state.events}
+          events={this.state.appointments}
           onEventDrop={this.moveEvent}
           defaultView={BigCalendar.Views.WEEK}
           scrollToTime={new Date(1970, 1, 1, 6)}
           defaultDate={new Date()}
           onEventResize={this.resizeEvent}
-          onSelectEvent={event => alert(event.title)}
+          onSelectEvent={appointment => alert(appointment.title)}
           onSelectSlot={this.selectSlot}
         />
       </React.Fragment>
     );
   }
 }
+
+// Home.propTypes = {
+//   current_user: PropTypes.Object
+// };
 
 const Calendar = DragDropContext(HTML5Backend)(Dnd);
 export default Calendar

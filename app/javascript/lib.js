@@ -10,7 +10,7 @@ for (let i = 0; i <= 95; i++) {
 }
 export const dateTimeStamp = arr
 
-export const eventConvertor = (events) => {
+export const appointmentConvertor = (events) => {
   events.map((event) => {
     event.end = new Date(event.end)
     event.start = new Date(event.start)
