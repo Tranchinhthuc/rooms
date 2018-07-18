@@ -7,6 +7,10 @@ class StaticPagesController < ApplicationController
     set_data
   end
 
+  def month_appointments
+    set_data
+  end
+
   def set_data
     appointments = Appointment.all
     @appointments_as_json = appointments.map { |appointment|

@@ -1382,3 +1382,52 @@ button.rbc-input::-moz-focus-inner {
     flex-direction: column;
     align-items: stretch;
 }
+
+.rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid #f7f7f7;
+  /* z-index: 100; */
+  font-size: 10px;
+  margin-left: -4px;
+}
+
+.rbc-events-container .rbc-event {
+  left: 26% !important;
+  width: 78% !important;
+}
+
+.rbc-day-slot.rbc-time-column.rbc-today .rbc-events-container .rbc-event {
+  left: 46px !important;
+  width: 145px !important;
+}
+
+.rbc-time-header-content {
+  min-width: auto;
+  .rbc-header.rbc-today {
+    width: 200px;
+  }
+}
+
+.rbc-time-content > .rbc-day-slot {
+  width: 200px;
+}
+
+.rbc-time-content {
+  display: -webkit-inline-box;
+}
+
+.rbc-time-content > .rbc-time-gutter {
+  display: none;
+}
+
+.rbc-label.rbc-time-header-gutter {
+  display: none;
+}
+
+.rbc-header a span {
+  white-space: normal;
+}
+
+.rbc-date-cell {
+  text-align: left;
+  word-wrap: break-word;
+}

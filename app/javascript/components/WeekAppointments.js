@@ -8,7 +8,7 @@ import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {appointmentConvertor, timeZone} from '../lib'
+import {appointmentConvertor, timeZone, countAppointmentsInDay} from '../lib'
 import AppointmentForm from './AppointmentForm'
 import CustomEvent from './CustomEvent';
 
@@ -165,6 +165,9 @@ class Dnd extends React.Component {
     })
 
     let indexEmployee = this.state.employees.map((e) => e.id).indexOf(this.state.resourceId);
+    let formats = {
+      dayFormat: (date, culture, localizer) => localizer.format(date, `DD dddd`, culture) + ` (${countAppointmentsInDay(appointmentConvertor(this.state.appointments), date)}_appointments)`
+    }
 
     return (
       <React.Fragment>
@@ -198,6 +201,7 @@ class Dnd extends React.Component {
           selectable
           resizable
           step={15}
+          formats={formats}
           components={{ event: CustomEvent }}
           views={['week']}
           events={this.state.appointments}

@@ -27,7 +27,6 @@ export const timeZone = new Date().getTimezoneOffset()/60
 
 export const countAppointmentsInDay = (appointments, datetime) => {
   return appointments.filter((app)=>{
-    console.log('app', app)
     return app.start.getDate() === datetime.getDate()
   }).length
 }
