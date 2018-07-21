@@ -1383,41 +1383,14 @@ button.rbc-input::-moz-focus-inner {
     align-items: stretch;
 }
 
+.rbc-day-slot .rbc-time-slot {
+  font-size: 10px;
+}
 
-
-
-
-// .rbc-day-slot .rbc-time-slot {
-//   border-top: 1px solid #f7f7f7;
-//   /* z-index: 100; */
-//   font-size: 10px;
-//   margin-left: -4px;
-// }
-
-// .rbc-events-container .rbc-event {
-//   left: 26% !important;
-//   width: 78% !important;
-// }
-
-// .rbc-day-slot.rbc-time-column.rbc-today .rbc-events-container .rbc-event {
-//   left: 46px !important;
-//   width: 145px !important;
-// }
-
-// .rbc-time-header-content {
-//   min-width: auto;
-//   .rbc-header.rbc-today {
-//     width: 200px;
-//   }
-// }
-
-// .rbc-time-content > .rbc-day-slot {
-//   width: 200px;
-// }
-
-// .rbc-time-content {
-//   display: -webkit-inline-box;
-// }
+.rbc-events-container .rbc-event {
+  left: 35% !important;
+  width: 65% !important;
+}
 
 .rbc-time-content > .rbc-time-gutter {
   display: none;
