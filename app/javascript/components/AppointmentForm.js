@@ -10,9 +10,11 @@ export default class AppointmentForm extends Component {
     this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleEmployeeChange = this.handleEmployeeChange.bind(this);
     this.state = {
       start: this.props.startTime,
       end: this.props.endTime,
+      resourceId: '',
       title: ''
     };
   }
@@ -30,12 +32,17 @@ export default class AppointmentForm extends Component {
     this.setState({title: e.target.value});
   }
 
+  handleEmployeeChange(e) {
+    console.log(e.target.value)
+    this.setState({resourceId: e.target.value});
+  }
+
   handleSubmit(e) {
-    let start = (this.state.start && `${moment(this.props.startTime).format("YYYY/MM/DD")} ${this.state.start}` ) ||
+    let start = (this.state.start && `${moment(this.this.props.startTime).format("YYYY/MM/DD")} ${this.state.start}` ) ||
       moment(this.props.startTime).format("YYYY/MM/DD HH:mm")
     let end = (this.state.end && `${moment(this.props.startTime).format("YYYY/MM/DD")} ${this.state.end}` ) ||
       moment(this.props.endTime).format("YYYY/MM/DD HH:mm")
-    this.props.handleSubmit(this.state.title, start, end, this.props.resourceId, new Date().getTimezoneOffset()/60, null);
+    this.props.handleSubmit(this.state.title, start, end, this.state.resourceId || this.props.resourceId, new Date().getTimezoneOffset()/60, null);
   }
   render() {
     return (
@@ -84,6 +91,23 @@ export default class AppointmentForm extends Component {
                       }
                     </select>
                   </p>
+                  {
+                    this.props.employees && (
+                      <p>
+                        <select className="form-control" onChange={this.handleEmployeeChange}>
+                          <option value=''>---Employee---</option>
+                          {
+                            this.props.employees.map((employee, index) => {
+                              return <option
+                                key={index}
+                                value={employee.id}>{employee.name}
+                              </option>
+                            })
+                          }
+                        </select>
+                      </p>
+                    )
+                  }
                   <p>
                     <button
                       style={{margin: '0px 2px'}}

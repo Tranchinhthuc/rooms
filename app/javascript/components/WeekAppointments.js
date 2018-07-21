@@ -175,6 +175,7 @@ class Dnd extends React.Component {
           startTime={this.state.startTime}
           resourceId={this.state.resourceId}
           resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
+          employees={this.state.employees}
           handleSubmit={this.handleSubmit} />
         <ul>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
