@@ -1,8 +1,9 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light no-print">
   <a class="navbar-brand" href="#">Appointment</a>
   <%= link_to "Appointments", '/' %> |
   <%= link_to "Week Appointments", '/week/appointments' %> |
-  <%= link_to "Month Appointments", '/month/appointments' %>
+  <%= link_to "Month Appointments", '/month/appointments' %> |
+  <%= link_to "Employees", employees_path %>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -14,5 +15,7 @@
     <% else %>
       <%= link_to "Sign In", new_user_session_path, class: 'btn btn-primary' %>
     <% end %>
+
+    <a class="<%='btn btn-primary print no-print ' + action_name %>" href="#" onclick="window.print();return false;">Print</a>
   </div>
 </nav>

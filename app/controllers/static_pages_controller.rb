@@ -16,15 +16,16 @@ class StaticPagesController < ApplicationController
     @appointments_as_json = appointments.map { |appointment|
       appointment_as_json(appointment)
     }
-    @statistic = {
-      total_appointments_of_this_week: appointments.count{ |app| app.in_this_week? },
-      remain_appointments_of_this_week: appointments.count{ |app| app.remain_in_this_week? },
-      total_appointments_of_this_month: appointments.count{ |app| app.in_this_month? },
-      remain_appointments_of_this_month: appointments.count{ |app| app.remain_in_this_month? },
-      total_appointments_of_this_year: appointments.count{ |app| app.in_this_year? },
-      total_appointments_of_today: appointments.count{ |app| app.in_today? }
-    }
+    @statistic = Appointment.statistic(appointments)
     @employees = Employee.all.map { |employee| employee_as_json(employee) }
+  end
+
+  def search
+    if params[:title]
+      @appointments = Appointment.where('name like ?', "%#{params[:title]}%")
+    else
+      @appointments = Appointment.all
+    end
   end
 
   private

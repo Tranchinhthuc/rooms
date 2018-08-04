@@ -1,49 +1,14 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import {dateTimeStamp, timeShotHeight, timeZone} from '../lib'
+import {dateTimeStamp} from '../lib'
 import moment from "moment";
+import Datetime from 'react-datetime';
 
 export default class AppointmentForm extends Component {
   constructor(props) {
     super(props);
-    this.handleStartTimeChange = this.handleStartTimeChange.bind(this);
-    this.handleEndTimeChange = this.handleEndTimeChange.bind(this);
-    this.handleTitleChange = this.handleTitleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleEmployeeChange = this.handleEmployeeChange.bind(this);
-    this.state = {
-      start: this.props.startTime,
-      end: this.props.endTime,
-      resourceId: '',
-      title: ''
-    };
   }
 
-  handleStartTimeChange(e) {
-    this.setState({start: e.target.value});
-  }
-
-  handleEndTimeChange(e) {
-    console.log('SELECT', e.target.value)
-    this.setState({end: e.target.value});
-  }
-
-  handleTitleChange(e) {
-    this.setState({title: e.target.value});
-  }
-
-  handleEmployeeChange(e) {
-    console.log(e.target.value)
-    this.setState({resourceId: e.target.value});
-  }
-
-  handleSubmit(e) {
-    let start = (this.state.start && `${moment(this.this.props.startTime).format("YYYY/MM/DD")} ${this.state.start}` ) ||
-      moment(this.props.startTime).format("YYYY/MM/DD HH:mm")
-    let end = (this.state.end && `${moment(this.props.startTime).format("YYYY/MM/DD")} ${this.state.end}` ) ||
-      moment(this.props.endTime).format("YYYY/MM/DD HH:mm")
-    this.props.handleSubmit(this.state.title, start, end, this.state.resourceId || this.props.resourceId, new Date().getTimezoneOffset()/60, null);
-  }
   render() {
     return (
         <div>
@@ -51,25 +16,34 @@ export default class AppointmentForm extends Component {
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-body">
-                  <p>Date: {moment(this.props.startTime).format("YYYY/MM/DD")}</p>
                   {
                     this.props.resourceTitle && (
                       <p>Employee: {this.props.resourceTitle}</p>
                     )
                   }
-                  <p><input type="text"
+                  <p><input value={this.props.title}
+                            type="text"
                             className="form-control"
                             id="appointment-title"
                             placeholder='Add Title'
-                            onChange={this.handleTitleChange}/>
+                            onChange={this.props.handleTitleChange}/>
                   </p>
+                  <Datetime
+                    value={this.props.selectedDate}
+                    onChange={this.props.handleSelectedDateChange}
+                    dateFormat="YYYY/MM/DD"
+                    timeFormat={false}
+                    closeOnSelect={true}
+                    inputProps={{placeholder: (this.props.selectedDate || 'Date')}} />
+                  <p></p>
                   <p>
-                    <select style={{width: '45%', display: 'inline-block'}} className="form-control" onChange={this.handleStartTimeChange}>
+                    <select style={{width: '45%', display: 'inline-block'}} className="form-control"
+                            onChange={this.props.handleStartTimeChange}>
                       <option value=''>---Start Time---</option>
                       {
                         dateTimeStamp.map((time, index) => {
                           return <option
-                            selected={time.timeStr===moment(this.props.startTime).format("HH:mm")}
+                            selected={time.timeStr===moment(this.props.start).format("HH:mm")}
                             key={index}
                             value={time.timeStr}>{time.timeStr}
                           </option>
@@ -78,12 +52,13 @@ export default class AppointmentForm extends Component {
                     </select>
 
                     <span style={{margin: '0px 2px'}}>~</span>
-                    <select style={{width: '45%', display: 'inline-block'}} className="form-control" onChange={this.handleEndTimeChange}>
+                    <select style={{width: '45%', display: 'inline-block'}} className="form-control"
+                            onChange={this.props.handleEndTimeChange}>
                       <option value=''>---End Time---</option>
                       {
                         dateTimeStamp.map((time, index) => {
                           return <option
-                            selected={time.timeStr===moment(this.props.endTime).format("HH:mm")}
+                            selected={time.timeStr===moment(this.props.end).format("HH:mm")}
                             key={index}
                             value={time.timeStr}>{time.timeStr}
                           </option>
@@ -94,11 +69,13 @@ export default class AppointmentForm extends Component {
                   {
                     this.props.employees && (
                       <p>
-                        <select className="form-control" onChange={this.handleEmployeeChange}>
+                        <select className="form-control"
+                          onChange={this.props.handleEmployeeChange}>
                           <option value=''>---Employee---</option>
                           {
                             this.props.employees.map((employee, index) => {
                               return <option
+                                selected={employee.name===this.props.resourceTitle}
                                 key={index}
                                 value={employee.id}>{employee.name}
                               </option>
@@ -114,7 +91,7 @@ export default class AppointmentForm extends Component {
                       type="button"
                       className="btn btn-primary"
                       data-dismiss="modal"
-                      onClick={this.handleSubmit}
+                      onClick={this.props.handleSubmit}
                     >Save
                     </button>
                     <button style={{margin: '0px 2px'}} type="button" className="btn btn-default" data-dismiss="modal">Close</button>

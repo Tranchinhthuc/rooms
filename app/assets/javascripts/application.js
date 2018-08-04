@@ -15,6 +15,9 @@
 //= require jquery3
 //= require popper
 //= require bootstrap-sprockets
+//= require js.cookie
+//= require jstz
+//= require browser_timezone_rails/set_time_zone
 
 $( document ).ready(function() {
     // $( ".rbc-day-slot.rbc-time-column.rbc-today .rbc-timeslot-group" ).remove();
@@ -55,13 +58,19 @@ $( document ).ready(function() {
         $(element).find('.rbc-timeslot-group .rbc-time-slot:even').each((index, element)=>{
             $( element ).text(timeslots[index])
         })
-        // this.style.color = "blue";
-        // this.addClass("blue");
-        // $( element ).text(timeslots[index]);
     });
 
-    // $( ".rbc-date-cell" ).each(function( index, element ) {
-    //     let text = $('.rbc-date-cell').text();
-    //     console.log(text)
-    // });
+    // $('.rbc-header span').each(function (index, elem) {
+    //     let elem_text = $(elem).text()
+    //     let new_elem_text = ''
+    //     new_elem_text = elem_text.replace('(', '<br>').replace('_', ' ').replace(')', '')
+    //     $(elem).replaceWith(`<span>${new_elem_text}</span>`);
+    // })
+
+    // $('.rbc-date-cell a').each(function (index, elem) {
+    //     let elem_text = $(elem).text()
+    //     let new_elem_text = ''
+    //     new_elem_text = elem_text.replace('(', '<br>').replace('_', ' ').replace(')', '')
+    //     $(elem).replaceWith(`<a href='#'>${new_elem_text}</a>`);
+    // })
 });

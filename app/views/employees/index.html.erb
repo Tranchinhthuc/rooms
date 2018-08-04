@@ -1,0 +1,23 @@
+<%= link_to 'Add New Employee', new_employee_path, class: 'btn btn-primary' %>
+<div class="container">
+  <h2>Employees</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @employees.each do |employee| %>
+        <tr>
+          <td><%= employee.email %></td>
+          <td><%= employee.name %></td>
+          <td><%= link_to 'Edit', edit_employee_path(employee), class: 'btn btn-warning' %></td>
+          <td><%= link_to 'Delete', employee_path(employee), method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -9,9 +9,6 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {appointmentConvertor, timeZone, countAppointmentsInDay} from '../lib'
-import AppointmentForm from './AppointmentForm'
-import CustomEvent from './CustomEvent';
-
 
 BigCalendar.momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
@@ -24,11 +21,29 @@ class Dnd extends React.Component {
     };
   }
 
+  onNavigate() {
+    $( document ).ready(function() {
+      $('.rbc-row-content .rbc-date-cell a').each(function (index, elem) {
+        let elem_text = $(elem).text()
+        $(elem).html(elem_text.replace('_', ' ').replace(' ', '<br>'))
+      })
+    })
+  }
+
+  componentDidMount() {
+    $( document ).ready(function() {
+      $('.rbc-date-cell a').each(function (index, elem) {
+        let elem_text = $(elem).text()
+        $(elem).html(elem_text.replace('_', ' ').replace(' ', '<br>'))
+      })
+    })
+  }
+
   render() {
     let formats = {
       dateFormat: (date, culture, localizer) => {
         let countApps = countAppointmentsInDay(appointmentConvertor(this.state.appointments), date)
-        return localizer.format(date, `DD`, culture) + (countApps > 0 ? ` ${countApps} appointments` : '')
+        return localizer.format(date, `DD`, culture) + (countApps > 0 ? ` ${countApps}_appointments` : '')
       }
     }
 
@@ -38,7 +53,7 @@ class Dnd extends React.Component {
           selectable
           resizable
           formats={formats}
-          components={{ event: CustomEvent }}
+          onNavigate={this.onNavigate}
           views={['month']}
           events={[]}
           defaultDate={new Date()}
@@ -49,10 +64,6 @@ class Dnd extends React.Component {
     );
   }
 }
-
-// Home.propTypes = {
-//   current_user: PropTypes.Object
-// };
 
 const Calendar = DragDropContext(HTML5Backend)(Dnd);
 export default Calendar

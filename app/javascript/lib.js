@@ -1,4 +1,6 @@
 // @flow
+import moment from "moment";
+
 export const timeShotHeight = 45
 
 const arr = []
@@ -27,6 +29,6 @@ export const timeZone = new Date().getTimezoneOffset()/60
 
 export const countAppointmentsInDay = (appointments, datetime) => {
   return appointments.filter((app)=>{
-    return app.start.getDate() === datetime.getDate()
+    return moment(app.start).format('YYYY/MM/DD') === moment(datetime).format('YYYY/MM/DD')
   }).length
 }

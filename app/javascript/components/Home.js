@@ -29,6 +29,10 @@ class Dnd extends React.Component {
       resourceId: '',
       startTime: '',
       endTime: '',
+      selectedDate: moment().format('YYYY/MM/DD'),
+      start: '',
+      end: '',
+      title: ''
     };
 
     this.moveEvent = this.moveEvent.bind(this);
@@ -73,9 +77,10 @@ class Dnd extends React.Component {
 
   selectSlot(slotInfo){
     this.setState({
-      startTime: slotInfo.start,
-      endTime: slotInfo.end,
+      start: slotInfo.start,
+      end: slotInfo.end,
       resourceId: slotInfo.resourceId,
+      selectedDate: moment(slotInfo.start).format("YYYY/MM/DD")
     });
     $('#appointment-form').modal('toggle');
     console.log(
@@ -120,7 +125,37 @@ class Dnd extends React.Component {
         )
   }
 
-  handleSubmit(title, startTime, endTime, resourceId, timeZone) {
+  handleSelectedDateChange(e) {
+    this.setState({
+      selectedDate: e.format('YYYY/MM/DD'),
+      start: e.format('YYYY/MM/DD') + ' ' + moment(this.state.start).format('HH:mm'),
+      end: e.format('YYYY/MM/DD') + ' ' + moment(this.state.end).format('HH:mm'),
+    });
+  }
+
+  handleStartTimeChange(e) {
+    this.setState({start: this.state.selectedDate + ' ' + e.target.value});
+  }
+
+  handleEndTimeChange(e) {
+    this.setState({end: this.state.selectedDate + ' ' + e.target.value});
+  }
+
+  handleTitleChange(e) {
+    this.setState({title: e.target.value});
+  }
+
+  handleEmployeeChange(e) {
+    this.setState({resourceId: e.target.value});
+  }
+
+  handleSubmit() {
+    let title = this.state.title
+    let startTime = moment(this.state.start).format("YYYY/MM/DD HH:mm")
+    let endTime = moment(this.state.end).format("YYYY/MM/DD HH:mm")
+    let resourceId = this.state.resourceId
+    let timeZone = new Date().getTimezoneOffset()/60
+
     const myRequest = new Request('/appointments', {
       method: 'POST',
       headers: {
@@ -144,12 +179,12 @@ class Dnd extends React.Component {
             this.setState({ errorMessage: "Start time should be less than end time" })
             return
           }
-          arr.push(result)
+          arr.push(result.appointment)
           this.setState({
             appointments: appointmentConvertor(arr),
             errorMessage: '',
             employees: this.state.employees.map((e) => {
-              if(result.resourceId == e.id){
+              if(result.appointment.resourceId == e.id){
                 e.appointmentCount = 1 + e.appointmentCount
               }
               return e
@@ -173,11 +208,18 @@ class Dnd extends React.Component {
 
     return (
       <React.Fragment>
-        <AppointmentForm endTime={this.state.endTime}
-          startTime={this.state.startTime}
-          resourceId={this.state.resourceId}
-          resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
-          handleSubmit={this.handleSubmit} />
+          <AppointmentForm end={this.state.end}
+            start={this.state.start}
+            selectedDate={this.state.selectedDate}
+            resourceId={this.state.resourceId}
+            resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
+            employees={this.state.employees}
+            handleSubmit={this.handleSubmit}
+            handleSelectedDateChange={this.handleSelectedDateChange.bind(this)}
+            handleStartTimeChange={this.handleStartTimeChange.bind(this)}
+            handleEndTimeChange={this.handleEndTimeChange.bind(this)}
+            handleTitleChange={this.handleTitleChange.bind(this)}
+            handleEmployeeChange={this.handleEmployeeChange.bind(this)}/>
         <DragAndDropCalendar
           selectable
           resizable

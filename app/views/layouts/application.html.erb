@@ -8,10 +8,23 @@
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
     <%= javascript_pack_tag 'application' %>
+    <style type="text/css" media="print">
+      .no-print {
+        display: none;
+      }
+    </style>
   </head>
 
   <body>
     <%= render 'shared/header' %>
+    <div class='row no-print'>
+      <div class='col-md-6' style='margin-left: 30%'>
+        <%= form_tag( '/search', method: :get ) do %>
+          <%= text_field_tag :title, nil, placeholder: 'Search by title' %>
+          <%= submit_tag 'Search' %>
+        <% end %>
+      </div>
+    </div>
     <%= yield %>
   </body>
 </html>

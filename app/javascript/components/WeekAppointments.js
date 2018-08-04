@@ -22,15 +22,36 @@ class Dnd extends React.Component {
     this.state = {
       appointments: appointmentConvertor(this.props.appointments),
       employees: this.props.employees,
+      statistic: this.props.statistic,
       resourceId: '',
-      startTime: '',
-      endTime: '',
+      selectedDate: moment().format('YYYY/MM/DD'),
+      start: moment(),
+      end: moment(),
+      title: ''
     };
 
     this.moveEvent = this.moveEvent.bind(this);
     this.selectSlot = this.selectSlot.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.resizeEvent = this.resizeEvent.bind(this);
+  }
+
+  onNavigate() {
+    $( document ).ready(function() {
+      $('.rbc-header span').each(function (index, elem) {
+        let elem_text = $(elem).text()
+        $(elem).html(elem_text.replace('_', ' ').replace('day', 'day <br>'))
+      })
+    })
+  }
+
+  componentDidMount() {
+    $( document ).ready(function() {
+      $('.rbc-header span').each(function (index, elem) {
+        let elem_text = $(elem).text()
+        $(elem).html(elem_text.replace('_', ' ').replace('day', 'day <br>'))
+      })
+    })
   }
 
   resizeEvent(resizeType, { event, start, end }){
@@ -50,7 +71,6 @@ class Dnd extends React.Component {
       .then(
         (result) => {
           let arr = this.state.appointments
-          console.log('MOVE', result)
           let index = arr.map((e) => e.id).indexOf(result.id);
           arr[index] = result
           this.setState({
@@ -69,17 +89,12 @@ class Dnd extends React.Component {
 
   selectSlot(slotInfo){
     this.setState({
-      startTime: slotInfo.start,
-      endTime: slotInfo.end,
+      start: slotInfo.start,
+      end: slotInfo.end,
       resourceId: slotInfo.resourceId,
+      selectedDate: moment(slotInfo.start).format("YYYY/MM/DD")
     });
     $('#appointment-form').modal('toggle');
-    console.log(
-      `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
-        `\nend: ${slotInfo.end.toLocaleString()}` +
-        `\naction: ${slotInfo.action}` +
-        `\nresourceId: ${slotInfo.resourceId}`
-    )
   }
 
   moveEvent({ event, start, end }) {
@@ -99,7 +114,6 @@ class Dnd extends React.Component {
         .then(
           (result) => {
             let arr = this.state.appointments
-            console.log('MOVE', result)
             let index = arr.map((e) => e.id).indexOf(result.id);
             arr[index] = result
             this.setState({
@@ -116,7 +130,36 @@ class Dnd extends React.Component {
         )
   }
 
-  handleSubmit(title, startTime, endTime, resourceId, timeZone) {
+  handleSelectedDateChange(e) {
+    this.setState({
+      selectedDate: e.format('YYYY/MM/DD'),
+      start: e.format('YYYY/MM/DD') + ' ' + moment(this.state.start).format('HH:mm'),
+      end: e.format('YYYY/MM/DD') + ' ' + moment(this.state.end).format('HH:mm'),
+    });
+  }
+
+  handleStartTimeChange(e) {
+    this.setState({start: this.state.selectedDate + ' ' + e.target.value});
+  }
+
+  handleEndTimeChange(e) {
+    this.setState({end: this.state.selectedDate + ' ' + e.target.value});
+  }
+
+  handleTitleChange(e) {
+    this.setState({title: e.target.value});
+  }
+
+  handleEmployeeChange(e) {
+    this.setState({resourceId: e.target.value});
+  }
+
+  handleSubmit() {
+    let title = this.state.title
+    let startTime = moment(this.state.start).format("YYYY/MM/DD HH:mm")
+    let endTime = moment(this.state.end).format("YYYY/MM/DD HH:mm")
+    let resourceId = this.state.resourceId
+    let timeZone = new Date().getTimezoneOffset()/60
     const myRequest = new Request('/appointments', {
       method: 'POST',
       headers: {
@@ -135,17 +178,17 @@ class Dnd extends React.Component {
       .then(
         (result) => {
           let arr = this.state.appointments
-          console.log('result', result)
           if(result.errors){
             this.setState({ errorMessage: "Start time should be less than end time" })
             return
           }
-          arr.push(result)
+          arr.push(result.appointment)
           this.setState({
+            statistic: result.statistic,
             appointments: appointmentConvertor(arr),
             errorMessage: '',
             employees: this.state.employees.map((e) => {
-              if(result.resourceId == e.id){ e.appointmentCount = e.appointmentCount + 1 }
+              if(result.appointment.resourceId == e.id){ e.appointmentCount = e.appointmentCount + 1 }
               return e
             })
           });
@@ -166,36 +209,45 @@ class Dnd extends React.Component {
 
     let indexEmployee = this.state.employees.map((e) => e.id).indexOf(this.state.resourceId);
     let formats = {
-      dayFormat: (date, culture, localizer) => localizer.format(date, `DD dddd`, culture) + ` (${countAppointmentsInDay(appointmentConvertor(this.state.appointments), date)}_appointments)`
+      dayFormat: (date, culture, localizer) => localizer.format(date, `DD dddd`, culture) + ` ${countAppointmentsInDay(appointmentConvertor(this.state.appointments), date)}_appointments`
     }
 
+    let statistic = this.state.statistic
     return (
       <React.Fragment>
-        <AppointmentForm endTime={this.state.endTime}
-          startTime={this.state.startTime}
+        <div className='container add-new-appointment no-print'>
+          <button className='btn btn-primary' onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
+        </div>
+        <AppointmentForm end={this.state.end}
+          start={this.state.start}
+          selectedDate={this.state.selectedDate}
           resourceId={this.state.resourceId}
           resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
           employees={this.state.employees}
-          handleSubmit={this.handleSubmit} />
-        <ul>
+          handleSubmit={this.handleSubmit}
+          handleSelectedDateChange={this.handleSelectedDateChange.bind(this)}
+          handleStartTimeChange={this.handleStartTimeChange.bind(this)}
+          handleEndTimeChange={this.handleEndTimeChange.bind(this)}
+          handleTitleChange={this.handleTitleChange.bind(this)}
+          handleEmployeeChange={this.handleEmployeeChange.bind(this)}/>
+        <ul className='no-print'>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {this.props.statistic.total_appointments_of_this_week} Appuntamenti totali questa settimana
+            {statistic.total_appointments_of_this_week} Appuntamenti totali questa settimana
           </li>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {console.log(this.props)}
-            {this.props.statistic.remain_appointments_of_this_week} Appuntamenti rimanenti questa settimana
+            {statistic.remain_appointments_of_this_week} Appuntamenti rimanenti questa settimana
           </li>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {this.props.statistic.total_appointments_of_this_month} Appuntamenti totali questo mese
+            {statistic.total_appointments_of_this_month} Appuntamenti totali questo mese
           </li>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {this.props.statistic.remain_appointments_of_this_month} Appuntamenti rimanenti questo mese
+            {statistic.remain_appointments_of_this_month} Appuntamenti rimanenti questo mese
           </li>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {this.props.statistic.total_appointments_of_this_year} Appuntamenti totali quest'anno
+            {statistic.total_appointments_of_this_year} Appuntamenti totali quest'anno
           </li>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {this.props.statistic.total_appointments_of_today} Al Momento non ci sono Appuntamenti.
+            {statistic.total_appointments_of_today} Al Momento non ci sono Appuntamenti.
           </li>
         </ul>
         <DragAndDropCalendar
@@ -207,6 +259,7 @@ class Dnd extends React.Component {
           views={['week']}
           events={this.state.appointments}
           onEventDrop={this.moveEvent}
+          onNavigate={this.onNavigate}
           defaultView={BigCalendar.Views.WEEK}
           defaultDate={new Date()}
           onEventResize={this.resizeEvent}

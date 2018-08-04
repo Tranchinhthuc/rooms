@@ -19,7 +19,7 @@ class AppointmentsController < ApplicationController
     @appointment.start_time = params[:start_time].to_datetime + params[:time_zone].to_i.hours
     @appointment.end_time = params[:end_time].to_datetime + params[:time_zone].to_i.hours
     if @appointment.save
-      render(json: appointment_as_json(@appointment))
+      render(json: {appointment: appointment_as_json(@appointment), statistic: Appointment.statistic(Appointment.all)})
     else
       render(json: {errors: @appointment.errors})
     end
