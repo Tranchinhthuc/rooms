@@ -5,9 +5,7 @@ export default class CustomEvent extends React.Component {
     return (
       <div>
         {this.props.title}
-        {
-          // this.props.event.userEmail
-        }
+        <button className='btn btn-danger delete-button'>X</button>
       </div>
     );
   }

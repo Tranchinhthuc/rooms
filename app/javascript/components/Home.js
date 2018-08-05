@@ -32,7 +32,8 @@ class Dnd extends React.Component {
       selectedDate: moment().format('YYYY/MM/DD'),
       start: '',
       end: '',
-      title: ''
+      title: '',
+      weekly: false
     };
 
     this.moveEvent = this.moveEvent.bind(this);
@@ -149,9 +150,14 @@ class Dnd extends React.Component {
     this.setState({resourceId: e.target.value});
   }
 
+  handleWeeklyChange(e) {
+    this.setState({weekly: !this.state.weekly});
+  }
+
   handleSubmit() {
     let title = this.state.title
     let startTime = moment(this.state.start).format("YYYY/MM/DD HH:mm")
+    let weekly = this.state.weekly
     let endTime = moment(this.state.end).format("YYYY/MM/DD HH:mm")
     let resourceId = this.state.resourceId
     let timeZone = new Date().getTimezoneOffset()/60
@@ -165,7 +171,8 @@ class Dnd extends React.Component {
       body: JSON.stringify({start_time: startTime, end_time: endTime, title: title,
         time_zone: timeZone,
         user_id: this.props.currentUser && this.props.currentUser.id,
-        resource_id: resourceId
+        resource_id: resourceId,
+        weekly: weekly
       })
     })
 
@@ -174,14 +181,13 @@ class Dnd extends React.Component {
       .then(
         (result) => {
           let arr = this.state.appointments
-          console.log('result', result)
           if(result.errors){
             this.setState({ errorMessage: "Start time should be less than end time" })
             return
           }
           arr.push(result.appointment)
           this.setState({
-            appointments: appointmentConvertor(arr),
+            appointments: appointmentConvertor(result.appointments),
             errorMessage: '',
             employees: this.state.employees.map((e) => {
               if(result.appointment.resourceId == e.id){
@@ -200,26 +206,87 @@ class Dnd extends React.Component {
       )
   }
 
+  handleAppointmentInprogressClick(e){
+    const myRequest = new Request('/appointments/in_progress', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Operator-Token': this.props.apiToken
+      }
+    })
+
+    fetch(myRequest)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result)
+          this.setState({
+            appointments: appointmentConvertor(result),
+            errorMessage: '',
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
+  onSelectEvent(appointment){ 
+    let r = window.confirm("Do you want to delete appoitment " + appointment.title + "?");
+    if (r == true) {
+      const myRequest = new Request(`/appointments/${appointment.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Operator-Token': this.props.apiToken
+        }
+      })
+  
+      fetch(myRequest)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            window.location.reload();
+          },
+          (error) => {
+            this.setState({
+              isLoaded: true,
+              error
+            });
+          }
+        )
+    }
+  }
+
   render() {
     let resourceMap = this.state.employees.map((em) => {
-      return { resourceId: em.id, resourceTitle: `${em.name}(${em.appointmentCount} appointments)` }
+      return { resourceId: em.id, resourceTitle: `${em.name} (${em.appointmentCount})` }
     })
     let indexEmployee = this.state.employees.map((e) => e.id).indexOf(this.state.resourceId);
 
     return (
       <React.Fragment>
-          <AppointmentForm end={this.state.end}
-            start={this.state.start}
-            selectedDate={this.state.selectedDate}
-            resourceId={this.state.resourceId}
-            resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
-            employees={this.state.employees}
-            handleSubmit={this.handleSubmit}
-            handleSelectedDateChange={this.handleSelectedDateChange.bind(this)}
-            handleStartTimeChange={this.handleStartTimeChange.bind(this)}
-            handleEndTimeChange={this.handleEndTimeChange.bind(this)}
-            handleTitleChange={this.handleTitleChange.bind(this)}
-            handleEmployeeChange={this.handleEmployeeChange.bind(this)}/>
+        <button className='btn btn-primary day-add-new-appointment'
+                onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
+        <button className="btn in-progerss-filter day_appointments"
+                onClick={this.handleAppointmentInprogressClick.bind(this)}>Appointment Inprogress</button>
+        <AppointmentForm end={this.state.end}
+          start={this.state.start}
+          weekly={this.state.weekly}
+          selectedDate={this.state.selectedDate}
+          resourceId={this.state.resourceId}
+          resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
+          employees={this.state.employees}
+          handleSubmit={this.handleSubmit}
+          handleSelectedDateChange={this.handleSelectedDateChange.bind(this)}
+          handleStartTimeChange={this.handleStartTimeChange.bind(this)}
+          handleEndTimeChange={this.handleEndTimeChange.bind(this)}
+          handleTitleChange={this.handleTitleChange.bind(this)}
+          handleEmployeeChange={this.handleEmployeeChange.bind(this)}
+          handleWeeklyChange={this.handleWeeklyChange.bind(this)}/>
         <DragAndDropCalendar
           selectable
           resizable
@@ -231,7 +298,7 @@ class Dnd extends React.Component {
           defaultView={BigCalendar.Views.DAY}
           defaultDate={new Date()}
           onEventResize={this.resizeEvent}
-          onSelectEvent={appointment => alert(appointment.title)}
+          onSelectEvent={this.onSelectEvent}
           onSelectSlot={this.selectSlot}
           resources={resourceMap}
           resourceIdAccessor="resourceId"
@@ -239,7 +306,6 @@ class Dnd extends React.Component {
           min={new Date(1970, 7, 1, 8, 0)}
           max={new Date(1970, 7, 1, 20, 0)}
           onNavigate={(day) => {
-            console.log('DAY', this.state.currentDay)
              this.setState({
                employees: this.state.employees.map((e) => {
                             e.appointmentCount = countAppointmentsInDay(appointmentConvertor(e.appointments), day)

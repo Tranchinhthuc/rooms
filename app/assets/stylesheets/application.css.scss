@@ -1420,13 +1420,63 @@ button.rbc-input::-moz-focus-inner {
 
 .week_appointments.btn.print {
   position: absolute;
-  top: 260px;
-  right: 52px;
+  top: 240px;
+  right: 15px;
 }
 
 .month_appointments.btn.print {
   display: none;
   position: absolute;
   top: 80px;
-  right: 52px;
+  right: 15px;
+}
+
+.home.btn.print {
+  position: absolute;
+  top: 80px;
+  right: 15px;
+}
+
+.week_appointments.btn.in-progerss-filter {
+  position: absolute;
+  top: 240px;
+  right: 80px;
+}
+
+.month_appointments.btn.in-progerss-filter {
+  position: absolute;
+  top: 80px;
+  right: 90px;
+}
+
+.day_appointments.btn.in-progerss-filter {
+  position: absolute;
+  top: 80px;
+  right: 80px;
+}
+
+.week-add-new-appointment {
+  position: absolute;
+  top: 240px;
+  right: 280px;
+}
+
+.day-add-new-appointment {
+  position: absolute;
+  top: 80px;
+  right: 280px;
+}
+
+.delete-button {
+  line-height: 12px;
+  width: 18px;
+  font-size: 8pt;
+  font-family: tahoma;
+  margin-top: 1px;
+  margin-right: 2px;
+  position:absolute;
+  bottom:0;
+  right:0;
+  font-weight: bold;
+  padding: 4px;
 }

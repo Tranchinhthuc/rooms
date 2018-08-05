@@ -27,31 +27,14 @@ class Dnd extends React.Component {
       selectedDate: moment().format('YYYY/MM/DD'),
       start: moment(),
       end: moment(),
-      title: ''
+      title: '',
+      weekly: false
     };
 
     this.moveEvent = this.moveEvent.bind(this);
     this.selectSlot = this.selectSlot.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.resizeEvent = this.resizeEvent.bind(this);
-  }
-
-  onNavigate() {
-    $( document ).ready(function() {
-      $('.rbc-header span').each(function (index, elem) {
-        let elem_text = $(elem).text()
-        $(elem).html(elem_text.replace('_', ' ').replace('day', 'day <br>'))
-      })
-    })
-  }
-
-  componentDidMount() {
-    $( document ).ready(function() {
-      $('.rbc-header span').each(function (index, elem) {
-        let elem_text = $(elem).text()
-        $(elem).html(elem_text.replace('_', ' ').replace('day', 'day <br>'))
-      })
-    })
   }
 
   resizeEvent(resizeType, { event, start, end }){
@@ -154,8 +137,41 @@ class Dnd extends React.Component {
     this.setState({resourceId: e.target.value});
   }
 
+  handleWeeklyChange(e) {
+    this.setState({weekly: !this.state.weekly});
+  }
+
+  handleAppointmentInprogressClick(e){
+    const myRequest = new Request('/appointments/in_progress', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Operator-Token': this.props.apiToken
+      }
+    })
+
+    fetch(myRequest)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result)
+          this.setState({
+            appointments: appointmentConvertor(result),
+            errorMessage: '',
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
   handleSubmit() {
     let title = this.state.title
+    let weekly = this.state.weekly
     let startTime = moment(this.state.start).format("YYYY/MM/DD HH:mm")
     let endTime = moment(this.state.end).format("YYYY/MM/DD HH:mm")
     let resourceId = this.state.resourceId
@@ -169,7 +185,8 @@ class Dnd extends React.Component {
       body: JSON.stringify({start_time: startTime, end_time: endTime, title: title,
         time_zone: timeZone,
         user_id: this.props.currentUser && this.props.currentUser.id,
-        resource_id: resourceId
+        resource_id: resourceId,
+        weekly: weekly
       })
     })
 
@@ -182,10 +199,9 @@ class Dnd extends React.Component {
             this.setState({ errorMessage: "Start time should be less than end time" })
             return
           }
-          arr.push(result.appointment)
           this.setState({
             statistic: result.statistic,
-            appointments: appointmentConvertor(arr),
+            appointments: appointmentConvertor(result.appointments),
             errorMessage: '',
             employees: this.state.employees.map((e) => {
               if(result.appointment.resourceId == e.id){ e.appointmentCount = e.appointmentCount + 1 }
@@ -202,6 +218,33 @@ class Dnd extends React.Component {
       )
   }
 
+  onSelectEvent(appointment){ 
+    let r = window.confirm("Do you want to delete appoitment " + appointment.title + "?");
+    if (r == true) {
+      const myRequest = new Request(`/appointments/${appointment.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Operator-Token': this.props.apiToken
+        }
+      })
+  
+      fetch(myRequest)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            window.location.reload();
+          },
+          (error) => {
+            this.setState({
+              isLoaded: true,
+              error
+            });
+          }
+        )
+    }
+  }
+
   render() {
     let resourceMap = this.state.employees.map((em) => {
       return { resourceId: em.id, resourceTitle: `${em.name}(${em.appointmentCount} appointments)` }
@@ -209,17 +252,20 @@ class Dnd extends React.Component {
 
     let indexEmployee = this.state.employees.map((e) => e.id).indexOf(this.state.resourceId);
     let formats = {
-      dayFormat: (date, culture, localizer) => localizer.format(date, `DD dddd`, culture) + ` ${countAppointmentsInDay(appointmentConvertor(this.state.appointments), date)}_appointments`
+      dayFormat: (date, culture, localizer) => localizer.format(date, `DD dddd`, culture) + ` (${countAppointmentsInDay(appointmentConvertor(this.state.appointments), date)})`
     }
 
     let statistic = this.state.statistic
     return (
       <React.Fragment>
-        <div className='container add-new-appointment no-print'>
-          <button className='btn btn-primary' onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
-        </div>
+        <button className='btn btn-primary week-add-new-appointment'
+                onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
+
+        <button className="btn in-progerss-filter week_appointments"
+                onClick={this.handleAppointmentInprogressClick.bind(this)}>Appointment Inprogress</button>
         <AppointmentForm end={this.state.end}
           start={this.state.start}
+          weekly={this.state.weekly}
           selectedDate={this.state.selectedDate}
           resourceId={this.state.resourceId}
           resourceTitle={(indexEmployee >= 0) && this.state.employees[indexEmployee].name}
@@ -229,7 +275,8 @@ class Dnd extends React.Component {
           handleStartTimeChange={this.handleStartTimeChange.bind(this)}
           handleEndTimeChange={this.handleEndTimeChange.bind(this)}
           handleTitleChange={this.handleTitleChange.bind(this)}
-          handleEmployeeChange={this.handleEmployeeChange.bind(this)}/>
+          handleEmployeeChange={this.handleEmployeeChange.bind(this)}
+          handleWeeklyChange={this.handleWeeklyChange.bind(this)}/>
         <ul className='no-print'>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
             {statistic.total_appointments_of_this_week} Appuntamenti totali questa settimana
@@ -260,10 +307,10 @@ class Dnd extends React.Component {
           events={this.state.appointments}
           onEventDrop={this.moveEvent}
           onNavigate={this.onNavigate}
+          onSelectEvent={this.onSelectEvent}
           defaultView={BigCalendar.Views.WEEK}
           defaultDate={new Date()}
           onEventResize={this.resizeEvent}
-          onSelectEvent={appointment => alert(appointment.title)}
           onSelectSlot={this.selectSlot}
           min={new Date(1970, 7, 1, 8, 0)}
           max={new Date(1970, 7, 1, 20, 0)}

@@ -11,6 +11,14 @@ class AppointmentsController < ApplicationController
     })
   end
 
+  def in_progress
+    @appointments = Appointment.where('start_time > ?', Time.zone.now)
+
+    render(json: @appointments.map { |appointment|
+      appointment_as_json(appointment)
+    })
+  end
+
   def create
     @appointment = Appointment.new
     @appointment.name = params[:title]
@@ -19,7 +27,22 @@ class AppointmentsController < ApplicationController
     @appointment.start_time = params[:start_time].to_datetime + params[:time_zone].to_i.hours
     @appointment.end_time = params[:end_time].to_datetime + params[:time_zone].to_i.hours
     if @appointment.save
-      render(json: {appointment: appointment_as_json(@appointment), statistic: Appointment.statistic(Appointment.all)})
+      if params[:weekly]
+        date = @appointment.start_time.to_date
+        week_count = (Date.today.end_of_year.to_date - @appointment.start_time.to_date).to_i / 7
+        week_count.times do |i|
+          new_app = @appointment.dup
+          new_app.start_time = @appointment.start_time + ((i + 1) * 7).days
+          new_app.end_time = @appointment.end_time + ((i + 1) * 7).days
+          new_app.save
+        end
+      end
+
+      appointments = Appointment.all
+      appointments_as_json = appointments.map { |appointment| appointment_as_json(appointment) }
+      render(json: {appointment: appointment_as_json(@appointment),
+        appointments: appointments_as_json,
+        statistic: Appointment.statistic(Appointment.all)})
     else
       render(json: {errors: @appointment.errors})
     end

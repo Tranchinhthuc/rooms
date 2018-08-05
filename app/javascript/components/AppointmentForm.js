@@ -43,7 +43,7 @@ export default class AppointmentForm extends Component {
                       {
                         dateTimeStamp.map((time, index) => {
                           return <option
-                            selected={time.timeStr===moment(this.props.start).format("HH:mm")}
+                            selected={time.timeStr===moment(this.props.start).format("HH:mm") || time.timeStr === '08:00'}
                             key={index}
                             value={time.timeStr}>{time.timeStr}
                           </option>
@@ -58,7 +58,7 @@ export default class AppointmentForm extends Component {
                       {
                         dateTimeStamp.map((time, index) => {
                           return <option
-                            selected={time.timeStr===moment(this.props.end).format("HH:mm")}
+                            selected={time.timeStr===moment(this.props.end).format("HH:mm") || time.timeStr === '08:00'}
                             key={index}
                             value={time.timeStr}>{time.timeStr}
                           </option>
@@ -85,6 +85,14 @@ export default class AppointmentForm extends Component {
                       </p>
                     )
                   }
+                  <p>
+                    <input type="checkbox"
+                            name="weekly"
+                            id="weekly"
+                            onChange={this.props.handleWeeklyChange}
+                            checked={this.props.weekly} />
+                    <label htmlFor='weekly' style={{marginLeft: '10px'}}>weekly?</label>
+                  </p>
                   <p>
                     <button
                       style={{margin: '0px 2px'}}
