@@ -206,35 +206,7 @@ class Dnd extends React.Component {
       )
   }
 
-  handleAppointmentInprogressClick(e){
-    const myRequest = new Request('/appointments/in_progress', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Operator-Token': this.props.apiToken
-      }
-    })
-
-    fetch(myRequest)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result)
-          this.setState({
-            appointments: appointmentConvertor(result),
-            errorMessage: '',
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
-  }
-
-  onSelectEvent(appointment){ 
+  onSelectEvent(appointment){
     let r = window.confirm("Do you want to delete appoitment " + appointment.title + "?");
     if (r == true) {
       const myRequest = new Request(`/appointments/${appointment.id}`, {
@@ -244,7 +216,7 @@ class Dnd extends React.Component {
           'X-Operator-Token': this.props.apiToken
         }
       })
-  
+
       fetch(myRequest)
         .then(res => res.json())
         .then(
@@ -271,8 +243,6 @@ class Dnd extends React.Component {
       <React.Fragment>
         <button className='btn btn-primary day-add-new-appointment'
                 onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
-        <button className="btn in-progerss-filter day_appointments"
-                onClick={this.handleAppointmentInprogressClick.bind(this)}>Appointment Inprogress</button>
         <AppointmentForm end={this.state.end}
           start={this.state.start}
           weekly={this.state.weekly}

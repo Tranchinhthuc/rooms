@@ -5,15 +5,9 @@ class AppointmentsController < ApplicationController
 
   def index
     @appointments = Appointment.all
-
-    render(json: @appointments.map { |appointment|
-      appointment_as_json(appointment)
-    })
-  end
-
-  def in_progress
-    @appointments = Appointment.where('start_time > ?', Time.zone.now)
-
+    if params[:employee_id].present?
+      @appointments = @appointments.where(employee_id: params[:employee_id])
+    end
     render(json: @appointments.map { |appointment|
       appointment_as_json(appointment)
     })

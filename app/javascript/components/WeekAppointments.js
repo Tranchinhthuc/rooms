@@ -228,7 +228,7 @@ class Dnd extends React.Component {
           'X-Operator-Token': this.props.apiToken
         }
       })
-  
+
       fetch(myRequest)
         .then(res => res.json())
         .then(
@@ -245,7 +245,36 @@ class Dnd extends React.Component {
     }
   }
 
+  handleFilterEmployeeChange(e) {
+    const myRequest = new Request('/appointments?employee_id=' + e.target.value, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Operator-Token': this.props.apiToken
+      }
+    })
+
+    fetch(myRequest)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result)
+          this.setState({
+            appointments: appointmentConvertor(result),
+            errorMessage: '',
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
   render() {
+    console.log(this.state.appointments)
     let resourceMap = this.state.employees.map((em) => {
       return { resourceId: em.id, resourceTitle: `${em.name}(${em.appointmentCount} appointments)` }
     })
@@ -260,9 +289,6 @@ class Dnd extends React.Component {
       <React.Fragment>
         <button className='btn btn-primary week-add-new-appointment'
                 onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
-
-        <button className="btn in-progerss-filter week_appointments"
-                onClick={this.handleAppointmentInprogressClick.bind(this)}>Appointment Inprogress</button>
         <AppointmentForm end={this.state.end}
           start={this.state.start}
           weekly={this.state.weekly}
@@ -297,6 +323,18 @@ class Dnd extends React.Component {
             {statistic.total_appointments_of_today} Al Momento non ci sono Appuntamenti.
           </li>
         </ul>
+        <select className="form-control filter-by-employee"
+          onChange={this.handleFilterEmployeeChange.bind(this)}>
+          <option value=''>---Employee---</option>
+          {
+            this.state.employees.map((employee, index) => {
+              return <option
+                key={index}
+                value={employee.id}>{employee.name}
+              </option>
+            })
+          }
+        </select>
         <DragAndDropCalendar
           selectable
           resizable

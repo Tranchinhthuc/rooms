@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
   devise_for :employees
   resources :employees
-  resources :appointments do
-    get 'in_progress', on: :collection
-  end
+  get '/appointments/in_progress' => 'static_pages#in_progress'
+  resources :appointments
   root 'static_pages#home'
   get '/week/appointments' => 'static_pages#week_appointments'
   get '/month/appointments' => 'static_pages#month_appointments'

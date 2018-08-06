@@ -28,6 +28,11 @@ class StaticPagesController < ApplicationController
     end
   end
 
+  def in_progress
+    @appointments = Appointment.where('start_time > ?', Time.zone.now)
+    render :search
+  end
+
   private
     def set_appointment
       @appointment = Appointment.find(params[:id])
