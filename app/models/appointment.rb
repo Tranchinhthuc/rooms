@@ -2,6 +2,8 @@ class Appointment < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :employee, optional: true
 
+  validate :start_time_should_be_less_than_end_time
+
   def in_today?
     start_time.to_date == Date.today
   end
@@ -35,5 +37,11 @@ class Appointment < ApplicationRecord
       total_appointments_of_this_year: appointments.count{ |app| app.in_this_year? },
       total_appointments_of_today: appointments.count{ |app| app.in_today? }
     }
+  end
+
+  private
+
+  def start_time_should_be_less_than_end_time
+    errors.add(:start_time, 'Start time should be less than end time') if start_time > end_time
   end
 end

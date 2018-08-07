@@ -4,7 +4,7 @@ import moment from "moment";
 export const timeShotHeight = 45
 
 const arr = []
-for (let i = 0; i <= 95; i++) {
+for (let i = 32; i <= 80; i++) {
   arr.push({
     timeStr: `${parseInt(i / 4) < 10 ? '0' : ''}${parseInt(i / 4)}:${i % 4 === 0 ? '0' : ''}${15*(i%4)}`,
     height: i * timeShotHeight,

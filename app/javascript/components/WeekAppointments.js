@@ -28,7 +28,8 @@ class Dnd extends React.Component {
       start: moment(),
       end: moment(),
       title: '',
-      weekly: false
+      weekly: false,
+      errorMessage: ''
     };
 
     this.moveEvent = this.moveEvent.bind(this);
@@ -287,6 +288,7 @@ class Dnd extends React.Component {
     let statistic = this.state.statistic
     return (
       <React.Fragment>
+        <p className='error'>{this.state.errorMessage}</p>
         <button className='btn btn-primary week-add-new-appointment'
                 onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
         <AppointmentForm end={this.state.end}
