@@ -8,9 +8,10 @@ class AppointmentsController < ApplicationController
     if params[:employee_id].present?
       @appointments = @appointments.where(employee_id: params[:employee_id])
     end
-    render(json: @appointments.map { |appointment|
-      appointment_as_json(appointment)
-    })
+
+    appointments_as_json = @appointments.map { |appointment| appointment_as_json(appointment) }
+    render(json: {appointments: appointments_as_json,
+      statistic: Appointment.statistic(@appointments)})
   end
 
   def create

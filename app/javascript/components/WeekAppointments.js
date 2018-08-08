@@ -29,6 +29,7 @@ class Dnd extends React.Component {
       end: moment(),
       title: '',
       weekly: false,
+      shouldResetEmployeeFilter: false,
       errorMessage: ''
     };
 
@@ -261,7 +262,8 @@ class Dnd extends React.Component {
         (result) => {
           console.log(result)
           this.setState({
-            appointments: appointmentConvertor(result),
+            statistic: result.statistic,
+            appointments: appointmentConvertor(result.appointments),
             errorMessage: '',
           });
         },
@@ -327,7 +329,7 @@ class Dnd extends React.Component {
         </ul>
         <select className="form-control filter-by-employee"
           onChange={this.handleFilterEmployeeChange.bind(this)}>
-          <option value=''>---Employee---</option>
+          <option selected={this.state.shouldResetEmployeeFilter} value=''>---Employee---</option>
           {
             this.state.employees.map((employee, index) => {
               return <option
