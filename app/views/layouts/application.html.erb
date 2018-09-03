@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Appointment</title>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="description" content="">
+  <meta name="author" content="">
+    <title>HairGo</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -17,14 +23,8 @@
 
   <body>
     <%= render 'shared/header' %>
-    <div class='row no-print'>
-      <div class='col-md-6' style='margin-left: 30%'>
-        <%= form_tag( '/search', method: :get ) do %>
-          <%= text_field_tag :title, nil, placeholder: 'Search by title' %>
-          <%= submit_tag 'Search' %>
-        <% end %>
-      </div>
-    </div>
+    <div class="container-fluid">
     <%= yield %>
+  </div>
   </body>
 </html>

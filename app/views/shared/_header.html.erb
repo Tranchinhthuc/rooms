@@ -1,22 +1,41 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light no-print">
-  <a class="navbar-brand" href="#">Appointment</a>
-  <%= link_to "Appointments", '/' %> |
-  <%= link_to "Week Appointments", '/week/appointments' %> |
-  <%= link_to "Month Appointments", '/month/appointments' %> |
-  <%= link_to "Inprogress Appointments", '/appointments/in_progress' %> |
-  <%= link_to "Employees", employees_path %>
+  <div class="container-fluid">
+  <div class="navbar-header">
+    <a class="navbar-brand">HairGo</a>
+  </div>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto"></ul>
-    <% if current_user %>
+
+
+      <%= link_to "Appointments", '/' , class: 'btn btn-primary print no-print'%>
+      <%= link_to "Settimanale", '/week/appointments' , class: 'btn btn-primary print no-print'%>
+      <%= link_to "Mensili", '/month/appointments' , class: 'btn btn-primary print no-print' %>
+      <%= link_to "Appuntamenti", '/appointments/in_progress' , class: 'btn btn-primary print no-print'%>
+      <%= link_to "Lavoranti", employees_path , class: 'btn btn-primary print no-print' %>
+
+
+
+<ul class="navbar-nav mr-auto"></ul>
+<div class='sear no-print'>
+    <%= form_tag( '/search', method: :get ) do %>
+      <%= text_field_tag :title, nil, placeholder: 'Cerca appuntamento' %>
+      <%= submit_tag 'Search' %>
+    <% end %>
+</div>
+
+
+
+        <% if current_user %>
       <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: 'btn btn-primary' %>
     <% else %>
       <%= link_to "Sign In", new_user_session_path, class: 'btn btn-primary' %>
     <% end %>
 
     <a class="<%='btn btn-primary print no-print ' + action_name %>" href="#" onclick="window.print();return false;">Print</a>
+
   </div>
+</div>
+
 </nav>

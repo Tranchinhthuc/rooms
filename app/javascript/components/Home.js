@@ -7,6 +7,7 @@ import { DragDropContext } from "react-dnd";
 import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
+import  "moment/locale/it";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {appointmentConvertor, timeZone, countAppointmentsInDay} from '../lib'
 import AppointmentForm from './AppointmentForm'
@@ -259,6 +260,7 @@ class Dnd extends React.Component {
           handleTitleChange={this.handleTitleChange.bind(this)}
           handleEmployeeChange={this.handleEmployeeChange.bind(this)}
           handleWeeklyChange={this.handleWeeklyChange.bind(this)}/>
+          
         <DragAndDropCalendar
           selectable
           resizable

@@ -7,6 +7,7 @@ import { DragDropContext } from "react-dnd";
 import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
+import  "moment/locale/it";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {appointmentConvertor, timeZone, countAppointmentsInDay} from '../lib'
 import AppointmentForm from './AppointmentForm'
@@ -220,7 +221,7 @@ class Dnd extends React.Component {
       )
   }
 
-  onSelectEvent(appointment){ 
+  onSelectEvent(appointment){
     let r = window.confirm("Do you want to delete appoitment " + appointment.title + "?");
     if (r == true) {
       const myRequest = new Request(`/appointments/${appointment.id}`, {
@@ -314,14 +315,9 @@ class Dnd extends React.Component {
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
             {statistic.remain_appointments_of_this_week} Appuntamenti rimanenti questa settimana
           </li>
+          
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {statistic.total_appointments_of_this_month} Appuntamenti totali questo mese
-          </li>
-          <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {statistic.remain_appointments_of_this_month} Appuntamenti rimanenti questo mese
-          </li>
-          <li style={{textAlign: 'center', listStyleType: 'none'}}>
-            {statistic.total_appointments_of_this_year} Appuntamenti totali quest'anno
+            {statistic.total_appointments_of_this_year} Appuntamenti totali anno
           </li>
           <li style={{textAlign: 'center', listStyleType: 'none'}}>
             {statistic.total_appointments_of_today} Al Momento non ci sono Appuntamenti.

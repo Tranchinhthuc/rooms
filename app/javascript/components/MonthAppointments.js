@@ -7,6 +7,7 @@ import { DragDropContext } from "react-dnd";
 import BigCalendar from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
+import  "moment/locale/it";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {appointmentConvertor, timeZone, countAppointmentsInDay} from '../lib'
 
@@ -49,6 +50,22 @@ class Dnd extends React.Component {
 
     return (
       <React.Fragment>
+      <ul className='no-print'>
+
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.total_appointments_of_this_month} Appuntamenti totali questo mese
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.remain_appointments_of_this_month} Appuntamenti rimanenti questo mese
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.total_appointments_of_this_year} Appuntamenti totali questanno
+          </li>
+          <li style={{textAlign: 'center', listStyleType: 'none'}}>
+            {this.props.statistic.total_appointments_of_today} Al Momento non ci sono Appuntamenti.
+          </li>
+        </ul>
+
         <DragAndDropCalendar
           selectable
           resizable

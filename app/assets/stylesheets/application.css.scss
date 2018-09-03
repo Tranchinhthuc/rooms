@@ -1,21 +1,9 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_self
- */
+
 
  @import "bootstrap";
  @import "css/react-big-calendar";
  @import "css/bootstrap-date-picker";
+
 
 .rbc-btn {
   color: inherit;
@@ -94,9 +82,11 @@
    font-size: 90%;
    min-height: 0;
    border-bottom: 1px solid #DDD;
+
  }
  .rbc-header + .rbc-header {
    border-left: 1px solid #DDD;
+
  }
  .rbc-rtl .rbc-header + .rbc-header {
    border-left-width: 0;
@@ -262,6 +252,8 @@
    -webkit-flex-direction: row;
        -ms-flex-direction: row;
            flex-direction: row;
+
+
  }
  .rbc-row-segment {
    padding: 0 1px 1px 1px;
@@ -304,6 +296,7 @@
    -webkit-flex-direction: row;
        -ms-flex-direction: row;
            flex-direction: row;
+
  }
  .rbc-month-row {
    display: -webkit-flex;
@@ -451,11 +444,13 @@
        -ms-flex-direction: column;
            flex-direction: column;
    min-height: 100%;
+
  }
  .rbc-time-column .rbc-timeslot-group {
    -webkit-flex: 1;
        -ms-flex: 1;
            flex: 1;
+
  }
  .rbc-timeslot-group {
    border-bottom: 1px solid #DDD;
@@ -466,6 +461,7 @@
    -webkit-flex-flow: column nowrap;
        -ms-flex-flow: column nowrap;
            flex-flow: column nowrap;
+
  }
  .rbc-time-gutter,
  .rbc-header-gutter {
@@ -478,6 +474,7 @@
  }
  .rbc-day-slot {
    position: relative;
+
  }
  .rbc-day-slot .rbc-events-container {
    bottom: 0;
@@ -485,10 +482,14 @@
    position: absolute;
    right: 10px;
    top: 0;
+
  }
  .rbc-day-slot .rbc-events-container.rbc-is-rtl {
    left: 10px;
-   right: 0;
+   right: 0;background: yellow;
+   background-color:red;
+   color:blue;
+
  }
  .rbc-day-slot .rbc-event {
    border: 1px solid #265985;
@@ -911,6 +912,7 @@ button.rbc-input::-moz-focus-inner {
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
+
 }
 .rbc-row-segment {
   padding: 0 1px 1px 1px;
@@ -1420,8 +1422,8 @@ button.rbc-input::-moz-focus-inner {
 
 .week_appointments.btn.print {
   position: absolute;
-  top: 240px;
-  right: 15px;
+  top: 180px;
+  right: 30px;
 }
 
 .month_appointments.btn.print {
@@ -1433,19 +1435,19 @@ button.rbc-input::-moz-focus-inner {
 
 .home.btn.print {
   position: absolute;
-  top: 80px;
+  top: 65px;
   right: 15px;
 }
 
 .week-add-new-appointment {
   position: absolute;
-  top: 240px;
-  right: 80px;
+  top: 180px;
+  right: 100px;
 }
 
 .day-add-new-appointment {
   position: absolute;
-  top: 80px;
+  top: 65px;
   right: 80px;
 }
 
@@ -1464,10 +1466,10 @@ button.rbc-input::-moz-focus-inner {
 }
 
 .filter-by-employee {
-  width: 20%;
+  width: 15%;
     position: absolute;
-    top: 240px;
-    left: 220px;
+    top: 100px;
+    right: 50px;
 }
 
 .error {
