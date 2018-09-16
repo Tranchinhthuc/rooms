@@ -292,7 +292,7 @@ class Dnd extends React.Component {
     return (
       <React.Fragment>
         <p className='error'>{this.state.errorMessage}</p>
-        <button className='btn btn-primary week-add-new-appointment'
+        <button className='no-print btn btn-primary week-add-new-appointment'
                 onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
         <AppointmentForm end={this.state.end}
           start={this.state.start}
@@ -323,7 +323,7 @@ class Dnd extends React.Component {
             {statistic.total_appointments_of_today} Al Momento non ci sono Appuntamenti.
           </li>
         </ul>
-        <select className="form-control filter-by-employee"
+        <select className="no-print form-control filter-by-employee"
           onChange={this.handleFilterEmployeeChange.bind(this)}>
           <option selected={this.state.shouldResetEmployeeFilter} value=''>---Employee---</option>
           {

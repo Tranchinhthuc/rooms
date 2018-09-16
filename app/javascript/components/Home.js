@@ -244,7 +244,7 @@ class Dnd extends React.Component {
     return (
       <React.Fragment>
         <p className='error'>{this.state.errorMessage}</p>
-        <button className='btn btn-primary day-add-new-appointment'
+        <button className='no-print btn btn-primary day-add-new-appointment'
                 onClick={()=>{$('#appointment-form').modal('toggle')}}>Add New Appointment</button>
         <AppointmentForm end={this.state.end}
           start={this.state.start}
@@ -260,7 +260,6 @@ class Dnd extends React.Component {
           handleTitleChange={this.handleTitleChange.bind(this)}
           handleEmployeeChange={this.handleEmployeeChange.bind(this)}
           handleWeeklyChange={this.handleWeeklyChange.bind(this)}/>
-          
         <DragAndDropCalendar
           selectable
           resizable
