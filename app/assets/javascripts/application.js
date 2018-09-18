@@ -60,6 +60,8 @@ $( document ).ready(function() {
         })
     });
 
+    $(".rbc-btn-group").addClass("no-print");
+
     // $('.rbc-header span').each(function (index, elem) {
     //     let elem_text = $(elem).text()
     //     let new_elem_text = ''
