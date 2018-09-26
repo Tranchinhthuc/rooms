@@ -1,0 +1,5 @@
+.row.no-print
+  .col-md-6{:style => "margin-left: 30%"}
+    = form_tag( '/search', method: :get ) do
+      = text_field_tag :title, nil, placeholder: 'Search by title'
+      = submit_tag 'Search'

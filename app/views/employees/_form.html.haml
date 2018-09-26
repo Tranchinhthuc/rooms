@@ -1,0 +1,12 @@
+= form_for @employee do |f|
+  .form-group
+    %label.control-label.col-sm-2{:for => "email"} Email:
+    .col-sm-10
+      = f.email_field :email, class: "form-control", placeholder: "Enter email"
+  .form-group
+    %label.control-label.col-sm-2{:for => "pwd"} Name:
+    .col-sm-10
+      = f.text_field :name, class: "form-control", placeholder: "Enter Name"
+  .form-group
+    .col-sm-offset-2.col-sm-10
+      = f.submit "Submit", class: "btn btn-primary"

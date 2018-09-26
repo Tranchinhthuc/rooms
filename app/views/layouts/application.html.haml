@@ -1,0 +1,109 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    %meta{:content => "ie=edge", "http-equiv" => "x-ua-compatible"}/
+    %meta{:content => "", :name => "description"}/
+    %meta{:content => "", :name => "author"}/
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag    'application', media: 'all'
+    = javascript_include_tag 'application'
+    = javascript_pack_tag 'application'
+    %title Starter Template - Materialize
+    %link{:href => "https://fonts.googleapis.com/icon?family=Material+Icons", :rel => "stylesheet"}/
+  %body
+    %nav.light-blue.lighten-1{:role => "navigation"}
+      .nav-wrapper.container
+        %a#logo-container.brand-logo{:href => "#"} Logo
+        %ul.right.hide-on-med-and-down
+          %li
+            %a{:href => "#"} Navbar Link
+        %ul#nav-mobile.sidenav
+          %li
+            %a{:href => "#"} Navbar Link
+        %a.sidenav-trigger{"data-target" => "nav-mobile", :href => "#"}
+          %i.material-icons menu
+    %div
+      .row
+        .col.s12.m3
+          .container
+            .row
+              %ul
+                %li
+                  Thuc
+                %li
+                  Thuc
+        .col.s12.m9
+          .row
+            .col.s12.m4.l3
+              .icon-block
+                %h2.center.light-blue-text
+                  %i.material-icons flash_on
+                %h5.center Speeds up development
+                %p.light We did most of the heavy lifting for you to provide a default stylings that incorporate our custom components. Additionally, we refined animations and transitions to provide a smoother experience for developers.
+            .col.s12.m4.l3
+              .icon-block
+                %h2.center.light-blue-text
+                  %i.material-icons group
+                %h5.center User Experience Focused
+                %p.light By utilizing elements and principles of Material Design, we were able to create a framework that incorporates components and animations that provide more feedback to users. Additionally, a single underlying responsive system across all platforms allow for a more unified user experience.
+            .col.s12.m4.l3
+              .icon-block
+                %h2.center.light-blue-text
+                  %i.material-icons settings
+                %h5.center Easy to work with
+                %p.light We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.
+            .col.s12.m4.l3
+              .icon-block
+                %h2.center.light-blue-text
+                  %i.material-icons settings
+                %h5.center Easy to work with
+                %p.light We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.
+            .col.s12.m4.l3
+              .icon-block
+                %h2.center.light-blue-text
+                  %i.material-icons settings
+                %h5.center Easy to work with
+                %p.light We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.
+            .col.s12.m4.l3
+              .icon-block
+                %h2.center.light-blue-text
+                  %i.material-icons settings
+                %h5.center Easy to work with
+                %p.light We have provided detailed documentation as well as specific code examples to help new users get started. We are also always open to feedback and can answer any questions a user may have about Materialize.
+      =yield
+    %footer.page-footer.orange
+      .container
+        .row
+          .col.l6.s12
+            %h5.white-text Company Bio
+            %p.grey-text.text-lighten-4 We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.
+          .col.l3.s12
+            %h5.white-text Settings
+            %ul
+              %li
+                %a.white-text{:href => "#!"} Link 1
+              %li
+                %a.white-text{:href => "#!"} Link 2
+              %li
+                %a.white-text{:href => "#!"} Link 3
+              %li
+                %a.white-text{:href => "#!"} Link 4
+          .col.l3.s12
+            %h5.white-text Connect
+            %ul
+              %li
+                %a.white-text{:href => "#!"} Link 1
+              %li
+                %a.white-text{:href => "#!"} Link 2
+              %li
+                %a.white-text{:href => "#!"} Link 3
+              %li
+                %a.white-text{:href => "#!"} Link 4
+      .footer-copyright
+        .container
+          Made by
+          %a.orange-text.text-lighten-3{:href => "http://materializecss.com"} Materialize

@@ -1,0 +1,17 @@
+%nav.navbar.navbar-expand-lg.navbar-light.bg-light.no-print
+  .container-fluid
+    .navbar-header
+      %a.navbar-brand RoomRental
+    %button.navbar-toggler{"aria-controls" => "navbarSupportedContent", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#navbarSupportedContent", "data-toggle" => "collapse", :type => "button"}
+      %span.navbar-toggler-icon
+    #navbarSupportedContent.collapse.navbar-collapse
+      %ul.navbar-nav.mr-auto
+      .sear.no-print
+        = form_tag( '/search', method: :get ) do
+          = text_field_tag :title, nil, placeholder: 'Cerca appuntamento'
+          = submit_tag 'Search'
+      - if current_user
+        = link_to "Sign Out", destroy_user_session_path, method: :delete, class: 'btn btn-primary'
+      - else
+        = link_to "Sign In", new_user_session_path, class: 'btn btn-success'
+      %a{:class => "#{'btn btn-primary print no-print ' + action_name}", :href => "#", :onclick => "window.print();return false;"} Print

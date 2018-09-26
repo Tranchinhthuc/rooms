@@ -1,0 +1,16 @@
+= link_to 'Add New Employee', new_employee_path, class: 'btn btn-primary'
+.container
+  %h2 Employees
+  %table.table.table-striped
+    %thead
+      %tr
+        %th Email
+        %th Name
+        %th Actions
+    %tbody
+      - @employees.each do |employee|
+        %tr
+          %td= employee.email
+          %td= employee.name
+          %td= link_to 'Edit', edit_employee_path(employee), class: 'btn btn-warning'
+          %td= link_to 'Delete', employee_path(employee), method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-danger'

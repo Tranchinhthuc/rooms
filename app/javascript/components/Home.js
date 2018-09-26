@@ -240,7 +240,7 @@ class Dnd extends React.Component {
       return { resourceId: em.id, resourceTitle: `${em.name} (${em.appointmentCount})` }
     })
     let indexEmployee = this.state.employees.map((e) => e.id).indexOf(this.state.resourceId);
-
+    console.log("indexEmployee", resourceMap);
     return (
       <React.Fragment>
         <p className='error'>{this.state.errorMessage}</p>

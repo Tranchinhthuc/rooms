@@ -1,0 +1,14 @@
+.container
+  %h2 Search Result
+  %table.table.table-striped
+    %thead
+      %tr
+        %th Appointments
+        %th apppointment
+        %th Time
+    %tbody
+      - @appointments.each do |apppointment|
+        %tr
+          %td= apppointment.name
+          %td= apppointment.employee.try(:name)
+          %td= apppointment.start_time.try(:strftime, '%Y/%m/%d-%l:%M')
