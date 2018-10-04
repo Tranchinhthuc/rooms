@@ -1,0 +1,37 @@
+%h2 Danh sách phòng
+= link_to new_host_room_path, class: 'waves-effect blue lighten-1 btn' do
+  %span
+    %i.material-icons add
+    Thêm phòng mới
+%table.responsive-table
+  %thead
+    %tr
+      %th Số phòng
+      %th Diện tích
+      %th Trạng thái
+      -# %th Địa chỉ
+      %th Giá tiền phòng
+      %th Giá tiền điện
+      %th Giá tiền nước
+      %th Cách tính tiền nước
+      %th
+  %tbody
+    - @rooms.each do |room|
+      %tr
+        %td= room.name
+        %td= room.size
+        -# %td= room.address
+        %td
+          %span.light-green-text.text-lighten-5.badge{class: admin_css_class_by_room_status(room)}= room.status_s
+        %td= room.price
+        %td= room.elictrical_price
+        %td= room.water_price
+        %td= room.water_fee_method
+        %td.actions
+          = link_to host_room_path(room), class: 'btn blue lighten-1', title: 'Xem Chi Tiết' do
+            %i.material-icons remove_red_eye
+          = link_to edit_host_room_path(room), class: 'btn lime lighten-2', title: 'Chỉnh sửa' do
+            %i.material-icons edit
+          = link_to host_room_path(room), method: :delete, class: 'btn orange darken-3', title: 'Xóa',
+            data: {confirm: "Bạn muốn xóa?"} do
+            %i.material-icons delete

@@ -1,0 +1,118 @@
+.row
+  %h4.related-links
+    %span
+      = link_to 'Trang chủ', root_path
+      %span ❯
+    %span
+      = link_to @room.district.name, root_path(q: {district_id_eq: @room.district_id})
+      %span ❯
+    %span
+      = link_to @room.commune.name, root_path(q: {commune_id_eq: @room.commune_id})
+      %span ❯
+    %b Phòng trọ #{@room.address}
+.row{style: 'border-left: 1px solid #c62828;'}
+  .col.l3.s12
+    .owner-info
+      .profile
+        .center
+          %a.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form"} Đăng ký xem phòng
+          = link_to root_path(q: {owner_id_eq: @room.owner_id}) do
+            .image
+              .circle-1
+              .circle-2
+              %img{:alt => "Jessica Potter", :height => "70", :src => "http://100dayscss.com/codepen/jessica-potter.jpg", :width => "70"}/
+          .name Chủ nhà: #{@room.owner.name}
+
+        %ul{style: 'padding: 10px'}
+          %li
+            Diện tích:
+            %b #{@room.size} m
+            %b
+              %sup 2
+          %li
+            Giá phòng:
+            %b= @room.price
+          %li
+            Trạng thái:
+            %b= @room.status_s
+  .col.l9.s12
+    .w3-content.w3-display-container{style: 'border: 1px solid black;'}
+      - @room.room_images.each do |room_image|
+        %a.slide{:href => "#"}
+          %img.mySlides{:src => room_image.image.url, :style => "width:100%; height: 500px"}/
+      %button.w3-button.w3-black.w3-display-left{:onclick => "plusDivs(-1)"} ❮
+      %button.w3-button.w3-black.w3-display-right{:onclick => "plusDivs(1)"} ❯
+  .col.l12
+    %h4 Mô tả
+    = @room.description
+.row.master-result-list{style: 'margin-top: 70px;'}
+  %h3.title Phòng cùng chủ nhà
+  - Room.available.where(owner_id: @room.owner_id).where.not(id: @room.id).each do |room|
+    .col.s12
+      .card.horizontal
+        .card-image
+          = link_to room_path(room) do
+            - if room.room_images.present?
+              = image_tag(room.room_images.first.image.cover.url, size: '190x190', style: 'border: 1px solid')
+              .top-right
+                %span.light-green-text.text-lighten-5.badge{class: user_css_class_by_room_status(room)}= room.status_s
+              .bottom-left
+                %span.badge.blue.light-green-text.text-lighten-5= "(#{room.room_images.count} ảnh)"
+            - else
+              = image_tag("logo", size: '190x190', style: 'border: 1px solid')
+              .top-right
+                %span.light-green-text.text-lighten-5.badge{class: user_css_class_by_room_status(room)}= room.status_s
+        .card-stacked
+          .card-content
+            %ul{style: 'font-weight: bold'}
+              %li
+                .col.s9
+                  %span #{room.price}/month
+              %li
+                .col.s9
+                  %span #{room.size} m
+                  %sup 2
+              %li
+                .col.s9
+                  %span #{room.address}
+          .card-action
+            %a.waves-effect.waves-light.btn{:href => room_path(room)} Chi tiết
+            %a.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form"} Đăng ký xem phòng
+
+#contact-form.modal
+  .modal-content
+    %h4 Đăng ký xem phòng
+    .row
+      %form.col.s12
+        .row
+          .input-field.col.s12
+            %i.material-icons.prefix account_circle
+            %input#full_name.validate{:placeholder => "Họ Tên", :type => "text"}/
+          .input-field.col.s12
+            %i.material-icons.prefix phone
+            %input#phone.validate{:type => "text", :placeholder => "Điện thoại"}/
+        .row
+          .input-field.col.s12
+            %i.material-icons.prefix edit_m
+            %textarea#note.materialize-textarea{:placeholder => "Ghi chú: Giờ rảnh rỗi, thời gian chuyển,..."}
+  .modal-footer
+    %a.modal-close.waves-effect.waves-green.btn-flat{:href => "#!"} Hủy
+    %a.modal-close.waves-effect.waves-green.btn-flat.teal.lighten-2.white-text{:href => "#!"} Gửi
+
+
+:javascript
+  var slideIndex = 1;
+  showDivs(slideIndex);
+  function plusDivs(n) {
+    showDivs(slideIndex += n);
+  }
+  function showDivs(n) {
+    var i;
+    var x = document.getElementsByClassName("mySlides");
+    if (n > x.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = x.length}
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";
+    }
+    x[slideIndex-1].style.display = "block";
+  }

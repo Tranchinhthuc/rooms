@@ -1,0 +1,57 @@
+= render 'shared/master_search_form'
+.row{style: 'background-color: gainsboro; padding: 5px;'}
+  %i.material-icons sort
+  = sort_link(@search, :price, (params['q'] && params['q']['s'] && params['q']['s'].include?('desc') ? 'Giá tăng dần' : 'Giá giảm dần'))
+.row.master-result-list
+  -# %h3 Danh sách phòng
+  - @rooms.first(20).each do |room|
+    .col.s12
+      .card.horizontal
+        .card-image
+          = link_to room_path(room) do
+            - if room.room_images.present?
+              = image_tag(room.room_images.first.image.cover.url, size: '190x190', style: 'border: 1px solid')
+              .top-right
+                %span.light-green-text.text-lighten-5.badge{class: user_css_class_by_room_status(room)}= room.status_s
+              .bottom-left
+                %span.badge.blue.light-green-text.text-lighten-5= "(#{room.room_images.count} ảnh)"
+            - else
+              = image_tag("logo", size: '190x190', style: 'border: 1px solid')
+              .top-right
+                %span.light-green-text.text-lighten-5.badge{class: user_css_class_by_room_status(room)}= room.status_s
+        .card-stacked
+          .card-content
+            %ul{style: 'font-weight: bold'}
+              %li
+                .col.s9
+                  %span #{room.price}/month
+              %li
+                .col.s9
+                  %span #{room.size} m
+                  %sup 2
+              %li
+                .col.s9
+                  %span #{room.address}
+          .card-action
+            %a.waves-effect.waves-light.btn{:href => room_path(room)} Chi tiết
+            %a.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form"} Đăng ký xem phòng
+= paginate @rooms
+#contact-form.modal
+  .modal-content
+    %h4 Đăng ký xem phòng
+    .row
+      %form.col.s12
+        .row
+          .input-field.col.s12
+            %i.material-icons.prefix account_circle
+            %input#full_name.validate{:placeholder => "Họ Tên", :type => "text"}/
+          .input-field.col.s12
+            %i.material-icons.prefix phone
+            %input#phone.validate{:type => "text", :placeholder => "Điện thoại"}/
+        .row
+          .input-field.col.s12
+            %i.material-icons.prefix edit_m
+            %textarea#note.materialize-textarea{:placeholder => "Ghi chú: Giờ rảnh rỗi, thời gian chuyển,..."}
+  .modal-footer
+    %a.modal-close.waves-effect.waves-green.btn-flat{:href => "#!"} Hủy
+    %a.modal-close.waves-effect.waves-green.btn-flat.teal.lighten-2.white-text{:href => "#!"} Gửi

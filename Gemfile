@@ -31,7 +31,13 @@ gem 'jquery-rails'
 gem 'browserify-rails'
 gem 'react-rails'
 gem 'webpacker'
+gem 'annotate'
+gem 'ransack'
+gem "breadcrumbs_on_rails"
+gem 'carrierwave', '~> 1.0'
+gem 'mini_magick'
 gem "haml-rails", "~> 1.0"
+gem 'kaminari'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
@@ -61,6 +67,8 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'awesome_print'
   gem 'rack-mini-profiler'
+  gem "better_errors"
+  gem "binding_of_caller"
 end
 
 group :test do

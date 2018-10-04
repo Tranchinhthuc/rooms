@@ -9,7 +9,10 @@ Bundler.require(*Rails.groups)
 module AppointmentApp
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
+
     config.load_defaults 5.2
+    I18n.enforce_available_locales = false
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '*.{rb,yml}').to_s]
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

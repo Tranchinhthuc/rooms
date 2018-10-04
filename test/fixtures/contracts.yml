@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  signed_date: 2018-09-27 20:58:24
+  expired_date: 2018-09-27 20:58:24
+  cancelled_date: 2018-09-27 20:58:24
+  room_id: 1
+  tenant_id: 1
+
+two:
+  signed_date: 2018-09-27 20:58:24
+  expired_date: 2018-09-27 20:58:24
+  cancelled_date: 2018-09-27 20:58:24
+  room_id: 1
+  tenant_id: 1

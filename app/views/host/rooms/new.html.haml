@@ -1,0 +1,8 @@
+.row
+  .container
+    %h2 Thêm phòng mới
+    = form_for([:host, @room], html: {class: 'form'}) do |f|
+      = render 'form', f: f
+
+      = link_to 'Hủy', host_rooms_path, class: 'waves-effect blue lighten-5 btn blue-text text-darken-2'
+      = f.submit 'Lưu', class: 'btn blue lighten-1'

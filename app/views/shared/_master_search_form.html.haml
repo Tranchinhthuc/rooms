@@ -1,0 +1,37 @@
+.row
+  .col.s12.m12
+    .row.master-search-form
+      = search_form_for @search, class: 'col s12' do |f|
+        .row
+          .input-field.col.s12.m4
+            = f.select(:district_city_id_eq, City.all.collect {|c| [ c.name, c.id, City.first.id ] })
+          .input-field.col.s12.m4
+            = f.select(:district_id_eq, District.all.collect { |d| [ d.name, d.id ] }, {include_blank: 'Quận/Huyện'})
+          .input-field.col.s12.m4
+            - if params[:q] && params[:q][:district_id_eq]
+              - communes = Commune.where(district_id: params[:q][:district_id_eq])
+            - else
+              - communes = []
+            = f.select(:commune_id_eq, communes.collect { |c| [ c.name, c.id] }, {include_blank: 'Xã/Phường'})
+        .row
+          .input-field.col.s12.m4
+            %select
+              %option{:disabled => "disabled", :selected => "selected", :value => ""} Khoảng Giá
+              %option{:value => "1"} Dưới 1.000.000
+              %option{:value => "1"} 1.000.000 - 2.000.000
+              %option{:value => "2"} 2.000.000 - 3.000.000
+              %option{:value => "3"} Trên 3.000.000
+          .input-field.col.s12.m4
+            %select
+              %option{:disabled => "disabled", :selected => "selected", :value => ""} Diện Tích
+              %option{:value => "1"} Dưới 20m
+              %option{:value => "2"} 20m - 30m
+              %option{:value => "3"} 30m - 40m
+              %option{:value => "4"} Trên 40m
+          .input-field.col.s12.m4
+            = f.select(:status_eq, [['Ở được ngay', 0], ['Ở được từ tháng sau', 2]], {include_blank: 'Trạng thái', selected: params[:q] && params[:q][:status_eq]})
+        .row
+          .input-field.col.s12.m6
+            %button.btn.waves-effect.waves-light{:name => "action", :type => "submit"}
+              Tìm kiếm
+              %i.material-icons.right search

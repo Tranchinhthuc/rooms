@@ -1,12 +1,19 @@
 Rails.application.routes.draw do
-  devise_for :employees
-  resources :employees
-  get '/appointments/in_progress' => 'static_pages#in_progress'
-  resources :appointments
-  # root 'static_pages#home'
-  get '/week/appointments' => 'static_pages#week_appointments'
-  get '/month/appointments' => 'static_pages#month_appointments'
-  get '/search' => 'static_pages#search'
   devise_for :users
-  root 'employees#index'
+  resources :rooms
+  resources :communes, only: [:index]
+  root 'rooms#index'
+
+  namespace :admin do
+    root to: "rooms#index"
+    resources :contracts
+    resources :rooms
+    resources :users
+  end
+
+  namespace :host do
+    root to: "rooms#index"
+    resources :rooms
+    resources :contracts
+  end
 end

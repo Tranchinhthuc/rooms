@@ -1,0 +1,18 @@
+.row
+  .col.s12.m6.offset-m3
+    %h2 Đăng nhập
+    = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+      .field
+        = f.label :login
+        = f.text_field :login, autofocus: true
+      .field
+        = f.label :password
+        = f.password_field :password, autocomplete: "off"
+      - if devise_mapping.rememberable?
+        %label
+          = f.check_box :remember_me
+          %span Ghi nhớ đăng nhập
+
+      .actions
+        = f.submit "Log in", class: 'btn'
+    = render "devise/shared/links"

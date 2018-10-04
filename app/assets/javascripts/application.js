@@ -14,4 +14,10 @@
 //= require activestorage
 //= require jquery3
 //= require materialize.min
+//= require jquery.flexslider-min
 //= require init
+
+  $(document).ready(function(){
+    $('select').formSelect();
+    $('.modal').modal();
+  });
