@@ -1,21 +1,24 @@
-.row
-  %h4.related-links
-    %span
-      = link_to 'Trang chủ', root_path
-      %span ❯
-    %span
-      = link_to @room.district.name, root_path(q: {district_id_eq: @room.district_id})
-      %span ❯
-    %span
-      = link_to @room.commune.name, root_path(q: {commune_id_eq: @room.commune_id})
-      %span ❯
-    %b Phòng trọ #{@room.address}
-.row{style: 'border-left: 1px solid #c62828;'}
+.row{style: 'margin-top: 20px'}
+  .breadcrumb-custom
+    %a{:href => root_path}
+      %span.breadcrumb-custom__inner
+        %span.breadcrumb-custom__title Trang chủ
+    %a{:href => root_path(q: {district_id_eq: @room.district_id})}
+      %span.breadcrumb-custom__inner
+        %span.breadcrumb-custom__title= @room.district.name
+    %a{:href => root_path(q: {commune_id_eq: @room.commune_id})}
+      %span.breadcrumb-custom__inner
+        %span.breadcrumb-custom__title=@room.commune.name
+    %a{:href => "#"}
+      %span.breadcrumb-custom__inner
+        %span.breadcrumb-custom__title Phòng trọ #{@room.address}
+
+.row{style: 'border-left: 1px solid #4db6ac;'}
   .col.l3.s12
     .owner-info
       .profile
         .center
-          %a.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form"} Đăng ký xem phòng
+          %a.link-show-contact-dialog.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form", :data => { room_id: @room.id, owner: @room.owner.name }} Đăng ký xem phòng
           = link_to root_path(q: {owner_id_eq: @room.owner_id}) do
             .image
               .circle-1
@@ -77,28 +80,32 @@
                   %span #{room.address}
           .card-action
             %a.waves-effect.waves-light.btn{:href => room_path(room)} Chi tiết
-            %a.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form"} Đăng ký xem phòng
+            %a.link-show-contact-dialog.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form", :data => { room_id: room.id, owner: room.owner.name }} Đăng ký xem phòng
 
 #contact-form.modal
-  .modal-content
-    %h4 Đăng ký xem phòng
-    .row
-      %form.col.s12
+  = form_for(:registration, url: registrations_path, method: :post, html: {class: 'form col s12'}) do |f|
+    = f.hidden_field :room_id
+    .modal-content
+      %h3 Đăng ký xem phòng
+      %h5
+        %b
+          Chủ nhà:
+          %span#owner_name
+      .row
         .row
           .input-field.col.s12
             %i.material-icons.prefix account_circle
-            %input#full_name.validate{:placeholder => "Họ Tên", :type => "text"}/
+            = f.text_field :customer_name, class: "validate", autofocus: true, :placeholder => "Họ Tên"
           .input-field.col.s12
             %i.material-icons.prefix phone
-            %input#phone.validate{:type => "text", :placeholder => "Điện thoại"}/
+            = f.text_field :customer_contact_info, class: "validate", autofocus: true, :placeholder => "Điện thoại"
         .row
           .input-field.col.s12
             %i.material-icons.prefix edit_m
-            %textarea#note.materialize-textarea{:placeholder => "Ghi chú: Giờ rảnh rỗi, thời gian chuyển,..."}
-  .modal-footer
-    %a.modal-close.waves-effect.waves-green.btn-flat{:href => "#!"} Hủy
-    %a.modal-close.waves-effect.waves-green.btn-flat.teal.lighten-2.white-text{:href => "#!"} Gửi
-
+            = f.text_area :message, class: "materialize-textarea", autofocus: true, :placeholder => "Ghi chú: Giờ rảnh rỗi, thời gian chuyển,..."
+    .modal-footer
+      %a.modal-close.waves-effect.waves-green.btn-flat{:href => "#!"} Hủy
+      = f.submit 'Gửi', class: 'btn teal lighten-2'
 
 :javascript
   var slideIndex = 1;
@@ -116,3 +123,12 @@
     }
     x[slideIndex-1].style.display = "block";
   }
+
+  $( document ).ready(function() {
+    console.log('Room Index')
+    $('.link-show-contact-dialog').click((event) => {
+      let data = $(event.target).data()
+      $('#owner_name').text(data.owner)
+      $('#registration_room_id').val(data.roomId)
+    })
+  });

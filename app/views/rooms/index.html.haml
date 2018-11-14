@@ -34,24 +34,39 @@
                   %span #{room.address}
           .card-action
             %a.waves-effect.waves-light.btn{:href => room_path(room)} Chi tiết
-            %a.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form"} Đăng ký xem phòng
+            %a.link-show-contact-dialog.waves-effect.waves-light.btn.modal-trigger{:href => "#contact-form", :data => { room_id: room.id, owner: room.owner.name }} Đăng ký xem phòng
 = paginate @rooms
 #contact-form.modal
-  .modal-content
-    %h4 Đăng ký xem phòng
-    .row
-      %form.col.s12
+  = form_for(:registration, url: registrations_path, method: :post, html: {class: 'form col s12'}) do |f|
+    = f.hidden_field :room_id
+    .modal-content
+      %h3 Đăng ký xem phòng
+      %h5
+        %b
+          Chủ nhà:
+          %span#owner_name
+      .row
         .row
           .input-field.col.s12
             %i.material-icons.prefix account_circle
-            %input#full_name.validate{:placeholder => "Họ Tên", :type => "text"}/
+            = f.text_field :customer_name, class: "validate", autofocus: true, :placeholder => "Họ Tên"
           .input-field.col.s12
             %i.material-icons.prefix phone
-            %input#phone.validate{:type => "text", :placeholder => "Điện thoại"}/
+            = f.text_field :customer_contact_info, class: "validate", autofocus: true, :placeholder => "Điện thoại"
         .row
           .input-field.col.s12
             %i.material-icons.prefix edit_m
-            %textarea#note.materialize-textarea{:placeholder => "Ghi chú: Giờ rảnh rỗi, thời gian chuyển,..."}
-  .modal-footer
-    %a.modal-close.waves-effect.waves-green.btn-flat{:href => "#!"} Hủy
-    %a.modal-close.waves-effect.waves-green.btn-flat.teal.lighten-2.white-text{:href => "#!"} Gửi
+            = f.text_area :message, class: "materialize-textarea", autofocus: true, :placeholder => "Ghi chú: Giờ rảnh rỗi, thời gian chuyển,..."
+    .modal-footer
+      %a.modal-close.waves-effect.waves-green.btn-flat{:href => "#!"} Hủy
+      = f.submit 'Gửi', class: 'btn teal lighten-2'
+
+:javascript
+  $( document ).ready(function() {
+    console.log('Room Index')
+    $('.link-show-contact-dialog').click((event) => {
+      let data = $(event.target).data()
+      $('#owner_name').text(data.owner)
+      $('#registration_room_id').val(data.roomId)
+    })
+  });

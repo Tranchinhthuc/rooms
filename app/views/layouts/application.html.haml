@@ -18,7 +18,8 @@
     %nav.teal.lighten-2{:role => "navigation"}
       .nav-wrapper.container
         %a#logo-container.brand-logo{:href => "/"}
-          =image_tag("nha_white_logo", style: 'position: relative; top: 8px;')
+          =#image_tag("nha_white_logo", style: 'position: relative; top: 8px;')
+          Phongtro68.com
         %ul.right.hide-on-med-and-down
           - if user_signed_in?
             %li

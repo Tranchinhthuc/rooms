@@ -1,0 +1,99 @@
+.row
+  .input-field.col.l6.s12
+    = f.number_field :size, class: "validate", autofocus: true
+    = f.label :size, 'Diện tích'
+    - if @room.errors && @room.errors.messages && @room.errors.messages[:size]
+      %p.form-error= @room.errors.messages[:size].first
+  .input-field.col.l6.s12
+    = f.text_field :price, class: "validate"
+    = f.label :price, 'Giá phòng'
+    - if @room.errors && @room.errors.messages && @room.errors.messages[:price]
+      %p.form-error= @room.errors.messages[:price].first
+.row
+  .input-field.col.l6.s12
+    = f.select :district_id, District.all.collect { |d| [d.name, d.id] }, { include_blank: 'Quận/Huyện' }, id: 'room-form-districts'
+    %label Quận/Huyện
+    - if @room.errors && @room.errors.messages && @room.errors.messages[:district]
+      %p.form-error= @room.errors.messages[:district].first
+  .input-field.col.l6.s12
+    - if @room && @room.district_id
+      = f.select :commune_id, Commune.where(district_id: @room.district_id).collect { |c| [c.name, c.id] }, { include_blank: 'Xã/Phường' }, id: 'room-form-communes'
+    - else
+      %select#room-form-communes{name: 'room[commune_id]'}
+        %option{:disabled => "disabled", :selected => "selected", :value => ""} Xã/Phường
+    %label Xã/Phường
+  - if @room.errors && @room.errors.messages && @room.errors.messages[:commune]
+    %p.form-error= @room.errors.messages[:commune].first
+.row
+  .input-field.col.l6.s12
+    - Room.statuses.each do |status, _number_val|
+      %p{style: 'display: inline-block; margin-right: 20px;'}
+        %label
+          = f.radio_button(:status, status)
+          %span=Room.status_s(status)
+    - if @room.errors && @room.errors.messages && @room.errors.messages[:status]
+      %p.form-error= @room.errors.messages[:status].first
+-# .row
+-#   .image-list
+-#     - @room.images.each do |image|
+-#       = image_tag(image.cover.url, size: '190x190')
+-#   .file-field.col.l6.s12
+-#     .btn.blue.lighten-1
+-#       %span Chọn ảnh khác
+-#       = f.file_field :images, multiple: true
+-#     .file-path-wrapper
+-#       %input.file-path.validate{:placeholder => "Chọn 1 hoặc nhiều ảnh", :type => "text"}/
+-# .row
+-#   .image-list
+-#     - @room.images.each do |image|
+-#       = image_tag(image.cover.url, size: '190x190')
+-#   .file-field.col.l6.s12
+-#     .btn.blue.lighten-1
+-#       %span Chọn ảnh khác
+-#       = f.file_field :images, multiple: true
+-#     .file-path-wrapper
+-#       %input.file-path.validate{:placeholder => "Chọn 1 hoặc nhiều ảnh", :type => "text"}/
+
+.row
+  - f.object.room_images.each do |room_image|
+    - if room_image.id
+      = image_tag(room_image.image.cover.url, size: '190x190', style: 'border: 1px solid')
+      - room_images_delete_params = { room: { room_images_attributes: { id: room_image.id, _destroy: true }}}
+      = link_to "Delete", host_room_path(f.object.id, room_images_delete_params), method: :patch, data: { confirm: 'Are you sure?' }
+
+  = f.fields_for :room_images, @room.room_images.build do |p|
+    .file-field.col.l6.s12
+      .btn.blue.lighten-1
+        %span Chọn ảnh khác
+        = p.file_field :image, :multiple => true, name: "room_images[image][]"
+      .file-path-wrapper
+        %input.file-path.validate{:placeholder => "Chọn 1 hoặc nhiều ảnh", :type => "text"}/
+
+%hr
+
+:javascript
+  $(document).ready(function() {
+    $('select').formSelect();
+    console.log('KKKKKK')
+    $("#room-form-districts").change(function(event) {
+      event.preventDefault();
+      $('#room-form-communes').empty();
+      $.get( `/communes.json?district_id=${event.target.value}`, ( data ) => {
+        $('#room-form-communes').formSelect();
+        $('#room-form-communes').on('contentChanged', function() {
+          $(this).formSelect();
+        });
+        $('#room-form-communes').append($('<option>', {
+            value: '',
+            text: 'Xã/Phường',
+        }, '</option>'));
+        $.each(data, (index, commune) => {
+            $('#room-form-communes').append($('<option>', {
+                value: commune.id,
+                text: commune.name,
+            }, '</option>'));
+        });
+        $("#room-form-communes").trigger('contentChanged');
+      });
+    });
+  });
