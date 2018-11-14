@@ -40,11 +40,11 @@ class RoomUploader < CarrierWave::Uploader::Base
   #   process resize_to_fill: [1200, 610]
   # end
 
-  if Rails.env.production? || Rails.env.staging?
-    storage :fog
-  else
+  # if Rails.env.production? || Rails.env.staging?
+    # storage :fog
+  # else
     storage :file
-  end
+  # end
 
   def store_dir
     "uploads/fund/#{mounted_as}/#{model.id}/"
